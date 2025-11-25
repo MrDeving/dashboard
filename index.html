@@ -1,8 +1,9 @@
-<html lang="en" class="dark"><head>
+<html lang="en" class="dark">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EUEE Dashboard</title>
-    <!-- Favicon (Make sure this file is also in the folder if you have it) -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" sizes="128x128" href="icon128.png">
 
     <!-- 1. LOCAL TAILWIND CSS -->
@@ -13,8 +14,29 @@
             theme: {
                 extend: {
                     colors: {
-                        gray: { 750: '#2d3748', 850: '#1a202c', 900: '#111827', 950: '#0d1117' },
-                        notion: { red: '#ff6b6b', yellow: '#feca57', green: '#1dd1a1', bio: '#e17055', chem: '#00b894', math: '#0984e3', phy: '#a29bfe' }
+                        // Using Zinc for a neutral, technical dark theme
+                        gray: { 
+                            50: '#fafafa', 
+                            100: '#f4f4f5', 
+                            200: '#e4e4e7', 
+                            300: '#d4d4d8', 
+                            400: '#a1a1aa', 
+                            500: '#71717a', 
+                            600: '#52525b', 
+                            700: '#3f3f46', 
+                            750: '#27272a', // Custom mid-dark
+                            800: '#27272a', 
+                            850: '#202023', // Custom darker
+                            900: '#18181b', 
+                            950: '#09090b' 
+                        },
+                        // Technical Colors (Replacing Purple with Indigo/Blue)
+                        tech: {
+                            primary: '#6366f1', // Indigo 500
+                            secondary: '#3b82f6', // Blue 500
+                            accent: '#10b981', // Emerald 500
+                        },
+                        notion: { red: '#ef4444', yellow: '#eab308', green: '#22c55e', bio: '#f97316', chem: '#14b8a6', math: '#3b82f6', phy: '#8b5cf6' }
                     }
                 }
             }
@@ -29,20 +51,28 @@
     <script src="lucide.js"></script>
 
     <style>
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #1f2937; }
-        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #a1a1aa; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #71717a; }
+        .dark ::-webkit-scrollbar-track { background: #18181b; }
+        .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
         .card-hover:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
-        .dragging { opacity: 0.5; border: 2px dashed #6366f1; }
+        
+        .dragging { opacity: 0.5; border: 2px dashed #3b82f6; }
         .drop-zone { transition: background-color 0.2s; }
-        .drop-zone.drag-over { background-color: rgba(55, 65, 81, 0.5); border: 2px dashed #4b5563; }
-        [contenteditable]:focus { outline: 2px solid #6366f1; background-color: #1f2937; border-radius: 4px; padding: 2px; }
+        .drop-zone.drag-over { background-color: rgba(59, 130, 246, 0.1); border: 2px dashed #3b82f6; }
+        
+        [contenteditable]:focus { outline: 2px solid #6366f1; border-radius: 4px; padding: 2px; }
         
         /* --- Spoiler & Bold CSS --- */
         .spoiler {
-            background-color: #374151;
+            background-color: #52525b;
             color: transparent;
             cursor: pointer;
             border-radius: 4px;
@@ -50,60 +80,72 @@
             user-select: none;
             transition: all 0.2s ease-in-out;
         }
-        .spoiler:hover { background-color: #4b5563; }
+        .spoiler:hover { background-color: #71717a; }
         .spoiler.revealed { background-color: transparent; color: inherit; user-select: text; }
         
         /* Custom Bold Style */
-        strong { color: #e2e8f0; font-weight: 800; }
+        strong { font-weight: 800; }
+        .dark strong { color: #e4e4e7; }
+        strong { color: #18181b; }
+
+        /* Transition for theme toggle */
+        body { transition: background-color 0.3s ease, color 0.3s ease; }
     </style>
 </head>
-<body class="bg-gray-950 text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden">
+<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden">
 
-    <nav class="bg-gray-800 border-b border-gray-700 flex-shrink-0">
+    <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex-shrink-0 transition-colors duration-300">
         <div class="w-full px-4 py-2 flex justify-between items-center">
-            <div class="flex space-x-2 bg-gray-900 p-1 rounded-lg overflow-x-auto">
+            <div class="flex space-x-2 bg-gray-100 dark:bg-gray-950 p-1 rounded-lg overflow-x-auto">
                 <button onclick="switchMainTab('topics')" id="nav-btn-topics" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all bg-indigo-600 text-white shadow-sm whitespace-nowrap">
                     <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Topics
                 </button>
-                <button onclick="switchMainTab('exams')" id="nav-btn-exams" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-400 hover:text-gray-200 whitespace-nowrap">
+                <button onclick="switchMainTab('exams')" id="nav-btn-exams" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 whitespace-nowrap">
                     <i data-lucide="calendar-clock" class="w-4 h-4"></i> Exams
                 </button>
-                <button onclick="switchMainTab('notes')" id="nav-btn-notes" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-400 hover:text-gray-200 whitespace-nowrap">
+                <button onclick="switchMainTab('notes')" id="nav-btn-notes" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 whitespace-nowrap">
                     <i data-lucide="sticky-note" class="w-4 h-4"></i> Notes
                 </button>
-                <button onclick="switchMainTab('time')" id="nav-btn-time" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-400 hover:text-gray-200 whitespace-nowrap">
+                <button onclick="switchMainTab('time')" id="nav-btn-time" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 whitespace-nowrap">
                     <i data-lucide="clock" class="w-4 h-4"></i> Reading
                 </button>
             </div>
-            <div class="flex gap-2 shrink-0">
-                <button id="btn-undo" onclick="undoLastAction()" disabled class="flex items-center gap-2 px-3 py-1.5 bg-gray-700 text-gray-400 font-bold rounded-md transition-all opacity-50 cursor-not-allowed hover:bg-gray-600">
+            <div class="flex gap-3 shrink-0 items-center">
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors border border-gray-200 dark:border-gray-700 shadow-sm" title="Toggle Theme">
+                    <i data-lucide="moon" class="w-4 h-4 hidden dark:block"></i>
+                    <i data-lucide="sun" class="w-4 h-4 block dark:hidden"></i>
+                </button>
+                
+                <div class="h-6 w-px bg-gray-300 dark:bg-gray-700 mx-1"></div>
+
+                <button id="btn-undo" onclick="undoLastAction()" disabled class="flex items-center gap-2 px-3 py-1.5 bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 font-bold rounded-md transition-all opacity-50 cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-700 border border-transparent">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i> <span class="hidden sm:inline">Undo</span>
                 </button>
-                <div class="h-8 w-px bg-gray-600 mx-1"></div>
-                <button id="btn-open" onclick="openFileNew()" class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-md transition-colors shadow-sm ring-1 ring-blue-400/50">
+                <button id="btn-open" onclick="openFileNew()" class="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-md transition-colors shadow-sm ring-1 ring-indigo-400/50">
                     <i data-lucide="folder-open" class="w-4 h-4"></i> <span class="hidden sm:inline">Switch File</span>
                 </button>
-                <button id="btn-save" onclick="saveFile()" disabled class="flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-gray-400 cursor-not-allowed text-xs font-bold rounded-md transition-colors shadow-sm ring-1 ring-gray-500/50">
+                <button id="btn-save" onclick="saveFile()" disabled class="flex items-center gap-2 px-3 py-1.5 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed text-xs font-bold rounded-md transition-colors shadow-sm border border-transparent">
                     <i data-lucide="save" class="w-4 h-4"></i> <span class="hidden sm:inline">Save</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <div id="data-overlay" class="absolute inset-0 z-40 bg-gray-950/95 flex flex-col items-center justify-center text-center p-6 backdrop-blur-sm">
-        <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-2xl max-w-lg w-full">
+    <div id="data-overlay" class="absolute inset-0 z-40 bg-white/95 dark:bg-gray-950/95 flex flex-col items-center justify-center text-center p-6 backdrop-blur-sm transition-colors duration-300">
+        <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl max-w-lg w-full">
             <div id="overlay-initial" class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-6"><i data-lucide="database" class="w-8 h-8 text-indigo-500"></i></div>
-                <h2 class="text-2xl font-bold text-gray-100 mb-2">Load Your Data</h2>
-                <p class="text-gray-400 mb-8">Connect to your local <code>data.json</code> file.</p>
+                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6"><i data-lucide="database" class="w-8 h-8 text-indigo-600 dark:text-indigo-400"></i></div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Load Your Data</h2>
+                <p class="text-gray-500 dark:text-gray-400 mb-8">Connect to your local <code>data.json</code> file.</p>
                 <button onclick="openFileNew()" class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-indigo-500/25 group">
                     <i data-lucide="folder-search" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> Select data.json
                 </button>
             </div>
             <div id="overlay-reconnect" class="hidden flex flex-col items-center">
-                <div class="w-16 h-16 bg-emerald-900/30 rounded-full flex items-center justify-center mb-6"><i data-lucide="file-check" class="w-8 h-8 text-emerald-500"></i></div>
-                <h2 class="text-2xl font-bold text-gray-100 mb-2">File Found</h2>
-                <p class="text-gray-400 mb-6">Reload your previous file.</p>
+                <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-6"><i data-lucide="file-check" class="w-8 h-8 text-emerald-600 dark:text-emerald-500"></i></div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">File Found</h2>
+                <p class="text-gray-500 dark:text-gray-400 mb-6">Reload your previous file.</p>
                 <button onclick="verifyAndLoad()" class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-emerald-500/25 animate-pulse">
                     <i data-lucide="refresh-cw" class="w-5 h-5"></i> Reload data.json
                 </button>
@@ -113,15 +155,14 @@
     </div>
 
     <div id="app-topics" class="flex-grow flex flex-col overflow-hidden h-full relative">
-        <header class="bg-gray-900 border-b border-gray-800 shadow-lg z-30 flex-shrink-0">
+        <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-30 flex-shrink-0 transition-colors duration-300">
             <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
-                <!-- Modified: Sections moved to Left -->
-                <div class="flex bg-gray-800 rounded-lg p-1 gap-1">
+                <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 gap-1">
                     <button onclick="switchTopicSubTab('topics')" id="tab-topics-sub" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm">All Subjects</button>
-                    <button onclick="switchTopicSubTab('analytics')" id="tab-analytics-sub" class="px-4 py-1.5 rounded-md text-sm font-medium hover:text-gray-200 transition-all text-gray-400">Analytics</button>
+                    <button onclick="switchTopicSubTab('analytics')" id="tab-analytics-sub" class="px-4 py-1.5 rounded-md text-sm font-medium hover:text-gray-900 dark:hover:text-gray-200 transition-all text-gray-500 dark:text-gray-400">Analytics</button>
                 </div>
                 
-                <div class="flex-grow"></div> <!-- Spacer -->
+                <div class="flex-grow"></div>
                 
                 <button onclick="openAddModal()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-sm"><i data-lucide="plus" class="w-4 h-4"></i> New Topic</button>
             </div>
@@ -137,28 +178,28 @@
             </div>
             <div id="view-analytics" class="w-full h-full p-4 sm:p-6 overflow-hidden flex flex-col lg:flex-row gap-6 hidden">
                 <div class="w-full lg:w-1/3 flex-shrink-0 flex flex-col gap-6 overflow-y-auto">
-                    <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg">
-                        <h2 class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2"><i data-lucide="pie-chart" class="w-5 h-5 text-indigo-400"></i>Progress</h2>
+                    <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 shadow-lg transition-colors duration-300">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-200 mb-4 flex items-center gap-2"><i data-lucide="pie-chart" class="w-5 h-5 text-indigo-500"></i>Progress</h2>
                         <div class="relative w-full aspect-square max-h-[300px] mx-auto"><canvas id="statusChart"></canvas></div>
                         <div class="mt-6 grid grid-cols-3 gap-2 text-center">
-                            <div class="p-3 bg-gray-800 rounded-lg"><div class="text-2xl font-bold text-notion-red" id="stat-todo">0</div><div class="text-xs text-gray-400 uppercase tracking-wider">To Do</div></div>
-                            <div class="p-3 bg-gray-800 rounded-lg"><div class="text-2xl font-bold text-notion-yellow" id="stat-prog">0</div><div class="text-xs text-gray-400 uppercase tracking-wider">In Prog</div></div>
-                            <div class="p-3 bg-gray-800 rounded-lg"><div class="text-2xl font-bold text-notion-green" id="stat-comp">0</div><div class="text-xs text-gray-400 uppercase tracking-wider">Done</div></div>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"><div class="text-2xl font-bold text-notion-red" id="stat-todo">0</div><div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">To Do</div></div>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"><div class="text-2xl font-bold text-notion-yellow" id="stat-prog">0</div><div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">In Prog</div></div>
+                            <div class="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"><div class="text-2xl font-bold text-notion-green" id="stat-comp">0</div><div class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider">Done</div></div>
                         </div>
                     </div>
-                    <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex-grow"><h3 class="text-sm font-bold text-gray-400 uppercase mb-4">Summary</h3><ul id="subject-summary" class="space-y-3 text-sm text-gray-300"></ul></div>
+                    <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-6 shadow-lg flex-grow transition-colors duration-300"><h3 class="text-sm font-bold text-gray-400 uppercase mb-4">Summary</h3><ul id="subject-summary" class="space-y-3 text-sm text-gray-600 dark:text-gray-300"></ul></div>
                 </div>
-                <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden h-full rounded-xl bg-gray-900/50 border border-gray-800/50 p-4">
-                    <div class="flex flex-col h-full min-h-0 bg-gray-900 rounded-lg border border-gray-800 drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'To Do')"><div class="p-3 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-gray-900 z-10 rounded-t-lg"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-red"></div><span class="font-semibold text-gray-200">To Do</span></div><span class="text-xs text-gray-500" id="count-kanban-todo">0</span></div><div id="kanban-todo" class="p-2 flex-grow overflow-y-auto space-y-2"></div></div>
-                    <div class="flex flex-col h-full min-h-0 bg-gray-900 rounded-lg border border-gray-800 drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'In Progress')"><div class="p-3 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-gray-900 z-10 rounded-t-lg"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-yellow"></div><span class="font-semibold text-gray-200">In Progress</span></div><span class="text-xs text-gray-500" id="count-kanban-prog">0</span></div><div id="kanban-prog" class="p-2 flex-grow overflow-y-auto space-y-2"></div></div>
-                    <div class="flex flex-col h-full min-h-0 bg-gray-900 rounded-lg border border-gray-800 drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'Complete')"><div class="p-3 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-gray-900 z-10 rounded-t-lg"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-green"></div><span class="font-semibold text-gray-200">Complete</span></div><span class="text-xs text-gray-500" id="count-kanban-comp">0</span></div><div id="kanban-comp" class="p-2 flex-grow overflow-y-auto space-y-2"></div></div>
+                <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden h-full rounded-xl bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-800/50 p-4 transition-colors duration-300">
+                    <div class="flex flex-col h-full min-h-0 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'To Do')"><div class="p-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-white dark:bg-gray-900 z-10 rounded-t-lg"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-red"></div><span class="font-semibold text-gray-700 dark:text-gray-200">To Do</span></div><span class="text-xs text-gray-500" id="count-kanban-todo">0</span></div><div id="kanban-todo" class="p-2 flex-grow overflow-y-auto space-y-2"></div></div>
+                    <div class="flex flex-col h-full min-h-0 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'In Progress')"><div class="p-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-white dark:bg-gray-900 z-10 rounded-t-lg"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-yellow"></div><span class="font-semibold text-gray-700 dark:text-gray-200">In Progress</span></div><span class="text-xs text-gray-500" id="count-kanban-prog">0</span></div><div id="kanban-prog" class="p-2 flex-grow overflow-y-auto space-y-2"></div></div>
+                    <div class="flex flex-col h-full min-h-0 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'Complete')"><div class="p-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-white dark:bg-gray-900 z-10 rounded-t-lg"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-green"></div><span class="font-semibold text-gray-700 dark:text-gray-200">Complete</span></div><span class="text-xs text-gray-500" id="count-kanban-comp">0</span></div><div id="kanban-comp" class="p-2 flex-grow overflow-y-auto space-y-2"></div></div>
                 </div>
             </div>
         </main>
     </div>
 
     <div id="app-exams" class="flex-grow flex flex-col overflow-hidden h-full hidden">
-        <header class="bg-gray-900 border-b border-gray-800 shadow-lg z-30 flex-shrink-0">
+        <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-30 flex-shrink-0 transition-colors duration-300">
             <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
                 <h1 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Exam Countdown Tracker</h1>
                 <button onclick="openExamModal()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-sm">
@@ -178,13 +219,13 @@
 
     <!-- Notes App with new Buttons -->
     <div id="app-notes" class="flex-grow flex flex-col overflow-hidden h-full hidden">
-        <header class="bg-gray-900 border-b border-gray-800 shadow-lg z-30 flex-shrink-0">
+        <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-30 flex-shrink-0 transition-colors duration-300">
             <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
                 <!-- New Filter Buttons on Left -->
-                <div class="flex bg-gray-800 rounded-lg p-1 gap-1">
+                <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 gap-1">
                     <button onclick="switchNoteTab('All')" id="note-tab-All" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm">All</button>
-                    <button onclick="switchNoteTab('Note')" id="note-tab-Note" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-gray-400 hover:text-gray-200">Notes</button>
-                    <button onclick="switchNoteTab('Question')" id="note-tab-Question" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-gray-400 hover:text-gray-200">Questions</button>
+                    <button onclick="switchNoteTab('Note')" id="note-tab-Note" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">Notes</button>
+                    <button onclick="switchNoteTab('Question')" id="note-tab-Question" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">Questions</button>
                 </div>
                 
                 <div class="flex-grow"></div>
@@ -194,7 +235,7 @@
                 </button>
             </div>
         </header>
-        <main class="flex-grow p-6 overflow-y-auto bg-gray-950">
+        <main class="flex-grow p-6 overflow-y-auto bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
             <div id="notes-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
                 </div>
             <div id="notes-empty" class="hidden text-center text-gray-500 mt-20">
@@ -206,62 +247,74 @@
 
 
     <div id="app-time" class="flex-grow flex flex-col overflow-hidden h-full hidden">
-        <header class="bg-gray-900 border-b border-gray-800 shadow-lg z-20 flex-shrink-0">
+        <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-20 flex-shrink-0 transition-colors duration-300">
             <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-                <h1 class="text-sm font-bold text-purple-400 uppercase tracking-wider">Reading Tracker</h1>
-                <button onclick="clearAllTimeData()" class="text-xs text-red-400 hover:text-red-300 underline">Reset Logs</button>
+                <h1 class="text-sm font-bold text-indigo-500 uppercase tracking-wider">Reading Tracker</h1>
+                <button onclick="clearAllTimeData()" class="text-xs text-red-500 hover:text-red-600 underline">Reset Logs</button>
             </div>
         </header>
-        <main class="flex-grow p-4 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto">
+        <main class="flex-grow p-4 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
             <div class="w-full flex flex-col lg:flex-row gap-6 h-full items-start">
                 <section class="w-full lg:w-[400px] flex-shrink-0 flex flex-col gap-6">
-                    <div class="bg-gray-900 rounded-xl p-6 border border-gray-800 shadow-lg">
-                        <h2 class="text-lg font-semibold mb-4 text-gray-200">Log Session</h2>
+                    <div class="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-lg transition-colors duration-300">
+                        <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-200">Log Session</h2>
                         <form id="logForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
-                            <div class="flex flex-col gap-1"><label class="text-xs text-gray-400 uppercase font-bold tracking-wider">Date</label><input type="date" id="dateInput" required="" class="bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-purple-500 w-full"></div>
-                            <div class="flex flex-col gap-1"><label class="text-xs text-gray-400 uppercase font-bold tracking-wider">Mins</label><input type="number" id="timeInput" placeholder="30" min="1" required="" class="bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-purple-500 w-full"></div>
-                            <button type="submit" class="col-span-1 sm:col-span-2 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded transition shadow-md mt-2">Add Entry</button>
+                            <div class="flex flex-col gap-1"><label class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Date</label><input type="date" id="dateInput" required="" class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-2 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 w-full transition-colors"></div>
+                            <div class="flex flex-col gap-1"><label class="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold tracking-wider">Mins</label><input type="number" id="timeInput" placeholder="30" min="1" required="" class="bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded p-2 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 w-full transition-colors"></div>
+                            <button type="submit" class="col-span-1 sm:col-span-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded transition shadow-md mt-2">Add Entry</button>
                         </form>
                     </div>
-                    <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-lg flex-grow flex flex-col overflow-hidden" style="min-height: 400px;">
-                        <div class="p-4 border-b border-gray-800 flex justify-between items-center"><h2 class="text-lg font-semibold text-gray-200">History</h2></div>
+                    <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg flex-grow flex flex-col overflow-hidden transition-colors duration-300" style="min-height: 400px;">
+                        <div class="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center"><h2 class="text-lg font-semibold text-gray-900 dark:text-gray-200">History</h2></div>
                         <div class="overflow-y-auto flex-grow" style="max-height: 600px;">
-                            <table class="w-full text-left border-collapse"><thead class="bg-gray-800 text-gray-400 sticky top-0 z-10"><tr><th class="p-3 text-xs font-bold uppercase tracking-wider">Date</th><th class="p-3 text-xs font-bold uppercase tracking-wider">Edit Time</th><th class="p-3 text-xs font-bold uppercase tracking-wider text-right">Del</th></tr></thead><tbody id="dataTableBody" class="divide-y divide-gray-800"></tbody></table>
+                            <table class="w-full text-left border-collapse"><thead class="bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 sticky top-0 z-10 transition-colors"><tr><th class="p-3 text-xs font-bold uppercase tracking-wider">Date</th><th class="p-3 text-xs font-bold uppercase tracking-wider">Edit Time</th><th class="p-3 text-xs font-bold uppercase tracking-wider text-right">Del</th></tr></thead><tbody id="dataTableBody" class="divide-y divide-gray-200 dark:divide-gray-800 transition-colors"></tbody></table>
                             <div id="emptyState" class="p-8 text-center text-gray-500 hidden">No logs found.</div>
                         </div>
                     </div>
                 </section>
-                <section class="flex-1 min-w-0 w-full bg-gray-900 rounded-xl border border-gray-800 shadow-lg p-6 flex flex-col">
-                    <div class="mb-6 flex justify-between items-end">
-                        <div><h2 class="text-lg font-semibold text-gray-200">Performance (Last 14 Days)</h2></div>
-                        <div class="flex gap-4"><div class="text-right"><p class="text-[10px] text-gray-400 uppercase">Total</p><p class="text-xl font-bold text-purple-400" id="totalTimeDisplay">0m</p></div><div class="text-right"><p class="text-[10px] text-gray-400 uppercase">Avg</p><p class="text-xl font-bold text-blue-400" id="avgTimeDisplay">0m</p></div></div>
+                <section class="flex-1 min-w-0 w-full bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-lg p-6 flex flex-col transition-colors duration-300">
+                    <div class="mb-6 flex flex-col sm:flex-row justify-between items-end gap-4">
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-200" id="performanceTitle">Performance (Last 14 Days)</h2>
+                            <!-- Chart Range Controls -->
+                            <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 gap-1 w-fit transition-colors">
+                                <button onclick="setChartRange(7)" id="btn-range-7" class="px-3 py-1 rounded text-xs font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">7D</button>
+                                <button onclick="setChartRange(14)" id="btn-range-14" class="px-3 py-1 rounded text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm">14D</button>
+                                <button onclick="setChartRange(21)" id="btn-range-21" class="px-3 py-1 rounded text-xs font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">21D</button>
+                                <button onclick="setChartRange(30)" id="btn-range-30" class="px-3 py-1 rounded text-xs font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">30D</button>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="text-right"><p class="text-[10px] text-gray-500 uppercase">Total</p><p class="text-xl font-bold text-indigo-600 dark:text-indigo-400" id="totalTimeDisplay">0m</p></div>
+                            <div class="text-right"><p class="text-[10px] text-gray-500 uppercase">Avg</p><p class="text-xl font-bold text-emerald-600 dark:text-emerald-400" id="avgTimeDisplay">0m</p></div>
+                        </div>
                     </div>
-                    <div class="relative flex-grow w-full h-[500px] flex items-center justify-center bg-gray-800/30 rounded-lg p-2"><canvas id="readingChart"></canvas></div>
+                    <div class="relative flex-grow w-full h-[500px] flex items-center justify-center bg-gray-50 dark:bg-gray-800/30 rounded-lg p-2 border border-gray-100 dark:border-transparent"><canvas id="readingChart"></canvas></div>
                 </section>
             </div>
         </main>
     </div>
 
-    <div id="dropdown-menu" class="absolute z-50 w-40 bg-gray-800 rounded-md shadow-xl border border-gray-700 py-1 text-sm hidden">
-        <button onclick="setStatusFromDropdown('To Do')" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-red"></div> Not Started</button>
-        <button onclick="setStatusFromDropdown('In Progress')" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-yellow"></div> In Progress</button>
-        <button onclick="setStatusFromDropdown('Complete')" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-green"></div> Complete</button>
+    <div id="dropdown-menu" class="absolute z-50 w-40 bg-white dark:bg-gray-800 rounded-md shadow-xl border border-gray-200 dark:border-gray-700 py-1 text-sm hidden">
+        <button onclick="setStatusFromDropdown('To Do')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-red"></div> Not Started</button>
+        <button onclick="setStatusFromDropdown('In Progress')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-yellow"></div> In Progress</button>
+        <button onclick="setStatusFromDropdown('Complete')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-green"></div> Complete</button>
     </div>
 
     <div id="add-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-2xl w-full max-w-md p-6">
-            <h2 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2"><i data-lucide="plus-circle" class="text-emerald-500"></i> Add New Topic</h2>
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-2xl w-full max-w-md p-6 transition-colors duration-300">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2"><i data-lucide="plus-circle" class="text-emerald-500"></i> Add New Topic</h2>
             <form onsubmit="saveNewTopic(event)" class="flex flex-col gap-4">
                 <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Subject</label>
-                    <select id="new-topic-subject" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500"><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Mathematics">Mathematics</option><option value="Physics">Physics</option></select>
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Subject</label>
+                    <select id="new-topic-subject" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2.5 text-gray-900 dark:text-gray-200 focus:outline-none focus:border-emerald-500"><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Mathematics">Mathematics</option><option value="Physics">Physics</option></select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Topic Title</label>
-                    <input type="text" id="new-topic-title" required class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Topic Title</label>
+                    <input type="text" id="new-topic-title" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2.5 text-gray-900 dark:text-gray-200 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div class="flex justify-end gap-2 mt-2">
-                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-md text-gray-400 hover:bg-gray-800 text-sm">Cancel</button>
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm">Cancel</button>
                     <button type="submit" class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-lg text-sm">Add Topic</button>
                 </div>
             </form>
@@ -269,19 +322,19 @@
     </div>
 
     <div id="add-exam-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-2xl w-full max-w-md p-6">
-            <h2 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2"><i data-lucide="calendar-plus" class="text-emerald-500"></i> New Exam Task</h2>
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-2xl w-full max-w-md p-6 transition-colors duration-300">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2"><i data-lucide="calendar-plus" class="text-emerald-500"></i> New Exam Task</h2>
             <form onsubmit="saveNewExam(event)" class="flex flex-col gap-4">
                 <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Exam Name</label>
-                    <input type="text" id="new-exam-name" required placeholder="e.g. Final Maths Exam" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Exam Name</label>
+                    <input type="text" id="new-exam-name" required placeholder="e.g. Final Maths Exam" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2.5 text-gray-900 dark:text-gray-200 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Exam Date</label>
-                    <input type="date" id="new-exam-date" required class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Exam Date</label>
+                    <input type="date" id="new-exam-date" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2.5 text-gray-900 dark:text-gray-200 focus:outline-none focus:border-emerald-500">
                 </div>
                 <div class="flex justify-end gap-2 mt-2">
-                    <button type="button" onclick="closeExamModal()" class="px-4 py-2 rounded-md text-gray-400 hover:bg-gray-800 text-sm">Cancel</button>
+                    <button type="button" onclick="closeExamModal()" class="px-4 py-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm">Cancel</button>
                     <button type="submit" class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-lg text-sm">Create Exam</button>
                 </div>
             </form>
@@ -289,27 +342,26 @@
     </div>
 
     <div id="add-note-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-2xl w-full max-w-md p-6">
-            <h2 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2" id="note-modal-title"><i data-lucide="sticky-note" class="text-emerald-500"></i> New Note</h2>
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-2xl w-full max-w-md p-6 transition-colors duration-300">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2" id="note-modal-title"><i data-lucide="sticky-note" class="text-emerald-500"></i> New Note</h2>
             <form onsubmit="saveNewNote(event)" class="flex flex-col gap-4">
                  <div>
-                    <!-- Updated Dropdown -->
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Type</label>
-                    <select id="new-note-subject" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Type</label>
+                    <select id="new-note-subject" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2.5 text-gray-900 dark:text-gray-200 focus:outline-none focus:border-emerald-500">
                         <option value="Question">Question</option>
                         <option value="Note">Note</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Title</label>
-                    <input type="text" id="new-note-title" required placeholder="e.g. Quadratic Formula" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Title</label>
+                    <input type="text" id="new-note-title" required placeholder="e.g. Quadratic Formula" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2.5 text-gray-900 dark:text-gray-200 focus:outline-none focus:border-emerald-500">
                 </div>
                  <div>
-                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Content <span class="text-gray-500 normal-case">(use |hidden| or **bold**)</span></label>
-                    <textarea id="new-note-content" required rows="6" placeholder="Enter note content here." class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Content <span class="text-gray-400 normal-case">(use |hidden| or **bold**)</span></label>
+                    <textarea id="new-note-content" required rows="6" placeholder="Enter note content here." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2.5 text-gray-900 dark:text-gray-200 focus:outline-none focus:border-emerald-500 resize-none"></textarea>
                 </div>
                 <div class="flex justify-end gap-2 mt-2">
-                    <button type="button" onclick="closeNoteModal()" class="px-4 py-2 rounded-md text-gray-400 hover:bg-gray-800 text-sm">Cancel</button>
+                    <button type="button" onclick="closeNoteModal()" class="px-4 py-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm">Cancel</button>
                     <button type="submit" class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-lg text-sm">Save Note</button>
                 </div>
             </form>
@@ -317,31 +369,31 @@
     </div>
 
      <div id="view-note-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden px-4">
-        <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
-            <div id="view-note-header" class="p-4 border-b border-gray-800 flex justify-between items-start rounded-t-xl bg-gray-800/50">
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col transition-colors duration-300">
+            <div id="view-note-header" class="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-start rounded-t-xl bg-gray-50 dark:bg-gray-800/50">
                 <div>
                     <div class="flex items-center gap-2 mb-1">
                          <i data-lucide="sticky-note" class="w-4 h-4 text-gray-400" id="view-note-icon"></i>
                          <span id="view-note-subject" class="text-xs font-bold uppercase tracking-wider text-gray-400">General</span>
                     </div>
                    
-                    <h2 id="view-note-title" class="text-xl font-bold text-gray-100 leading-tight">Note Title</h2>
+                    <h2 id="view-note-title" class="text-xl font-bold text-gray-900 dark:text-gray-100 leading-tight">Note Title</h2>
                     <p id="view-note-date" class="text-xs text-gray-500 mt-1">Created on...</p>
                 </div>
-                <button onclick="closeViewNoteModal()" class="text-gray-400 hover:text-gray-200 p-1 bg-gray-800 rounded-full hover:bg-gray-700 transition">
+                <button onclick="closeViewNoteModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 p-1 bg-gray-100 dark:bg-gray-800 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
             
-            <div class="p-6 overflow-y-auto custom-scrollbar flex-grow bg-gray-950">
-                <div id="view-note-content" class="text-gray-300 leading-relaxed whitespace-pre-wrap font-mono text-sm">
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-grow bg-white dark:bg-gray-950">
+                <div id="view-note-content" class="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap font-mono text-sm">
                     </div>
             </div>
-             <div class="p-3 border-t border-gray-800 bg-gray-900 flex justify-between items-center rounded-b-xl">
-                 <button onclick="openNoteModal(currentViewNoteId)" class="flex items-center gap-2 px-3 py-1.5 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-400/10 rounded-md transition-colors text-sm font-medium">
+             <div class="p-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex justify-between items-center rounded-b-xl transition-colors">
+                 <button onclick="openNoteModal(currentViewNoteId)" class="flex items-center gap-2 px-3 py-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-400/10 rounded-md transition-colors text-sm font-medium">
                     <i data-lucide="edit" class="w-4 h-4"></i> Edit Note
                 </button>
-                 <button id="btn-delete-note" class="flex items-center gap-2 px-3 py-1.5 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-md transition-colors text-sm font-medium">
+                 <button id="btn-delete-note" class="flex items-center gap-2 px-3 py-1.5 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-400/10 rounded-md transition-colors text-sm font-medium">
                     <i data-lucide="trash-2" class="w-4 h-4"></i> Delete Note
                 </button>
              </div>
@@ -355,6 +407,8 @@
         let entries = [];
         let exams = [];
         let notes = [];
+        // New settings object for persisting theme, defaulting to dark
+        let settings = { theme: 'dark' };
         let fileHandle = null;
         let historyStack = [];
         
@@ -365,7 +419,8 @@
         let editingNoteId = null;
         let currentViewNoteId = null;
         
-        let currentNoteFilter = 'All'; // Track filter state
+        let currentNoteFilter = 'All'; 
+        let currentChartRange = 14; 
 
         // --- DB ---
         const DB_NAME = 'ProductivityHubDB';
@@ -398,6 +453,9 @@
 
         // --- FILE SYSTEM ---
         async function init() {
+            // Apply theme immediately on init
+            applyTheme();
+
             const existingHandle = await getStoredHandle();
             if (existingHandle) {
                 fileHandle = existingHandle;
@@ -438,16 +496,15 @@
                 topics = data.topics || [];
                 entries = data.entries || [];
                 exams = data.exams || [];
+                // Load settings if they exist, otherwise default to dark
+                settings = data.settings || { theme: 'dark' };
                 
                 // --- DATA MIGRATION LOGIC ---
-                // Convert any old notes with "General", "Biology", etc. to "Question" by default
-                // Only keep "Note" if explicitly set.
                 let rawNotes = data.notes || [];
                 const validTypes = ["Note", "Question"];
-                
                 notes = rawNotes.map(n => {
                     if (!validTypes.includes(n.subject)) {
-                        n.subject = "Question"; // Default old notes to Questions
+                        n.subject = "Question"; 
                     }
                     return n;
                 });
@@ -455,10 +512,13 @@
                 historyStack = [];
                 updateUndoButton();
 
+                // Apply the loaded theme
+                applyTheme();
+
                 document.getElementById('data-overlay').classList.add('hidden');
                 const btnSave = document.getElementById('btn-save');
                 btnSave.disabled = false;
-                btnSave.classList.remove('bg-gray-600', 'text-gray-400', 'cursor-not-allowed');
+                btnSave.classList.remove('bg-gray-300', 'dark:bg-gray-700', 'text-gray-500', 'cursor-not-allowed');
                 btnSave.classList.add('bg-emerald-600', 'hover:bg-emerald-500', 'text-white', 'ring-emerald-400/50');
                 
                 switchMainTab('topics');
@@ -479,7 +539,8 @@
                 if(typeof lucide !== 'undefined') lucide.createIcons();
 
                 const writable = await fileHandle.createWritable();
-                const data = { topics, entries, exams, notes }; 
+                // Save settings along with data
+                const data = { topics, entries, exams, notes, settings }; 
                 await writable.write(JSON.stringify(data, null, 4));
                 await writable.close();
 
@@ -489,9 +550,36 @@
             } catch (err) { console.error(err); alert("Failed to save."); }
         }
 
+        // --- THEME LOGIC ---
+        function toggleTheme() {
+            settings.theme = settings.theme === 'dark' ? 'light' : 'dark';
+            applyTheme();
+            saveFile(); // Auto-save preference to file immediately if loaded
+        }
+
+        function applyTheme() {
+            const html = document.documentElement;
+            if (settings.theme === 'dark') {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+            // Re-render charts to update colors if they exist
+            if (topicChartInstance) {
+                topicChartInstance.destroy();
+                topicChartInstance = null;
+                renderTopicApp(); 
+            }
+            if (timeChartInstance) {
+                timeChartInstance.destroy();
+                timeChartInstance = null;
+                renderTimeApp();
+            }
+        }
+
         // --- UNDO ---
         function saveStateToHistory() {
-            const state = JSON.stringify({ topics, entries, exams, notes }); 
+            const state = JSON.stringify({ topics, entries, exams, notes, settings }); 
             historyStack.push(state);
             if (historyStack.length > 50) historyStack.shift();
             updateUndoButton();
@@ -503,7 +591,9 @@
             entries = prevState.entries;
             exams = prevState.exams || [];
             notes = prevState.notes || []; 
+            settings = prevState.settings || { theme: 'dark' };
             
+            applyTheme();
             renderTopicApp();
             renderTimeApp();
             renderExamApp();
@@ -513,8 +603,15 @@
         }
         function updateUndoButton() {
             const btn = document.getElementById('btn-undo');
-            if (historyStack.length > 0) { btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.classList.add('hover:bg-gray-600', 'text-white'); btn.classList.remove('text-gray-400'); } 
-            else { btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed'); btn.classList.remove('hover:bg-gray-600', 'text-white'); btn.classList.add('text-gray-400'); }
+            if (historyStack.length > 0) { 
+                btn.disabled = false; 
+                btn.classList.remove('opacity-50', 'cursor-not-allowed'); 
+                btn.classList.add('hover:bg-gray-300', 'dark:hover:bg-gray-700'); 
+            } else { 
+                btn.disabled = true; 
+                btn.classList.add('opacity-50', 'cursor-not-allowed'); 
+                btn.classList.remove('hover:bg-gray-300', 'dark:hover:bg-gray-700'); 
+            }
         }
 
         // --- TABS ---
@@ -532,28 +629,28 @@
             [appTopics, appExams, appNotes, appTime].forEach(el => el.classList.add('hidden'));
             [btnTopics, btnExams, btnNotes, btnTime].forEach(btn => {
                 btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
-                btn.classList.add('text-gray-400', 'hover:text-gray-200');
+                btn.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200');
             });
 
             if (tab === 'topics') {
                 appTopics.classList.remove('hidden');
                 btnTopics.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                btnTopics.classList.remove('text-gray-400');
+                btnTopics.classList.remove('text-gray-500', 'dark:text-gray-400');
                 renderTopicApp();
             } else if (tab === 'exams') {
                 appExams.classList.remove('hidden');
                 btnExams.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                btnExams.classList.remove('text-gray-400');
+                btnExams.classList.remove('text-gray-500', 'dark:text-gray-400');
                 renderExamApp();
             } else if (tab === 'notes') { 
                 appNotes.classList.remove('hidden');
                 btnNotes.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                btnNotes.classList.remove('text-gray-400');
+                btnNotes.classList.remove('text-gray-500', 'dark:text-gray-400');
                 renderNotesApp();
             } else {
                 appTime.classList.remove('hidden');
                 btnTime.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                btnTime.classList.remove('text-gray-400');
+                btnTime.classList.remove('text-gray-500', 'dark:text-gray-400');
                 renderTimeApp();
             }
             if(typeof lucide !== 'undefined') lucide.createIcons();
@@ -569,22 +666,22 @@
                 topicsView.classList.remove('hidden');
                 analyticsView.classList.add('hidden');
                 tabTopics.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                tabTopics.classList.remove('text-gray-400');
+                tabTopics.classList.remove('text-gray-500', 'dark:text-gray-400');
                 tabAnalytics.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
-                tabAnalytics.classList.add('text-gray-400');
+                tabAnalytics.classList.add('text-gray-500', 'dark:text-gray-400');
             } else {
                 topicsView.classList.add('hidden');
                 analyticsView.classList.remove('hidden');
                 tabAnalytics.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                tabAnalytics.classList.remove('text-gray-400');
+                tabAnalytics.classList.remove('text-gray-500', 'dark:text-gray-400');
                 tabTopics.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
-                tabTopics.classList.add('text-gray-400');
+                tabTopics.classList.add('text-gray-500', 'dark:text-gray-400');
                 renderTopicApp();
             }
         }
 
         // --- 1. TOPIC LOGIC ---
-        function getStatusColor(status) { switch(status) { case 'Complete': return 'bg-notion-green text-gray-900'; case 'In Progress': return 'bg-notion-yellow text-gray-900'; default: return 'bg-notion-red text-gray-900'; } }
+        function getStatusColor(status) { switch(status) { case 'Complete': return 'bg-notion-green text-white'; case 'In Progress': return 'bg-notion-yellow text-gray-900'; default: return 'bg-notion-red text-white'; } }
         function getStatusLabel(status) { return status === 'To Do' ? 'Not Started' : status; }
         function openAddModal() { document.getElementById('add-modal').classList.remove('hidden'); document.getElementById('new-topic-title').focus(); }
         function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); document.getElementById('new-topic-title').value = ''; }
@@ -608,12 +705,18 @@
         function handleDrop(e, newStatus) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); const id = parseInt(e.dataTransfer.getData("text/plain")); const t = topics.find(t => t.id === id); if (t && t.status !== newStatus) { saveStateToHistory(); t.status = newStatus; renderTopicApp(); saveFile(); } document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging')); }
 
         function createGridCard(topic) {
-            const c = { 'Biology': 'border-notion-bio/30 hover:border-notion-bio/60', 'Chemistry': 'border-notion-chem/30 hover:border-notion-chem/60', 'Mathematics': 'border-notion-math/30 hover:border-notion-math/60', 'Physics': 'border-notion-phy/30 hover:border-notion-phy/60' }[topic.subject] || 'border-gray-700';
-            return `<div class="card-hover bg-gray-800/50 border ${c} rounded-lg p-3 transition-all duration-200 group relative">
-                <div class="flex items-start gap-2 mb-2"><i data-lucide="file-text" class="w-4 h-4 mt-1 text-gray-400 flex-shrink-0"></i><div contenteditable="true" onblur="updateTopicTitle(${topic.id}, this.innerText)" class="text-sm font-medium text-gray-200 leading-tight flex-grow cursor-text outline-none rounded px-1 -ml-1 hover:bg-gray-700/50 transition-colors">${topic.title}</div></div>
-                <button onclick="showDropdown(event, ${topic.id})" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${getStatusColor(topic.status)} hover:opacity-80 transition-opacity">${getStatusLabel(topic.status)} <i data-lucide="chevron-down" class="w-3 h-3 ml-1"></i></button></div>`;
+            const c = { 
+                'Biology': 'border-notion-bio/30 bg-orange-50 dark:bg-gray-800/50 hover:border-notion-bio/60', 
+                'Chemistry': 'border-notion-chem/30 bg-teal-50 dark:bg-gray-800/50 hover:border-notion-chem/60', 
+                'Mathematics': 'border-notion-math/30 bg-blue-50 dark:bg-gray-800/50 hover:border-notion-math/60', 
+                'Physics': 'border-notion-phy/30 bg-purple-50 dark:bg-gray-800/50 hover:border-notion-phy/60' 
+            }[topic.subject] || 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50';
+            
+            return `<div class="card-hover border ${c} rounded-lg p-3 transition-all duration-200 group relative">
+                <div class="flex items-start gap-2 mb-2"><i data-lucide="file-text" class="w-4 h-4 mt-1 text-gray-400 flex-shrink-0"></i><div contenteditable="true" onblur="updateTopicTitle(${topic.id}, this.innerText)" class="text-sm font-medium text-gray-800 dark:text-gray-200 leading-tight flex-grow cursor-text outline-none rounded px-1 -ml-1 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">${topic.title}</div></div>
+                <button onclick="showDropdown(event, ${topic.id})" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${getStatusColor(topic.status)} hover:opacity-80 transition-opacity shadow-sm">${getStatusLabel(topic.status)} <i data-lucide="chevron-down" class="w-3 h-3 ml-1"></i></button></div>`;
         }
-        function createKanbanCard(topic) { return `<div draggable="true" ondragstart="handleDragStart(event, ${topic.id})" class="cursor-grab active:cursor-grabbing bg-gray-800 border border-gray-700 rounded-lg p-3 shadow-sm hover:border-indigo-500/50 hover:bg-gray-750 transition-all"><span class="text-[10px] uppercase tracking-wider opacity-60 mb-1 block">${topic.subject}</span><div class="flex items-start gap-2"><span class="text-sm font-medium text-gray-200 leading-tight">${topic.title}</span></div></div>`; }
+        function createKanbanCard(topic) { return `<div draggable="true" ondragstart="handleDragStart(event, ${topic.id})" class="cursor-grab active:cursor-grabbing bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-sm hover:border-indigo-500/50 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all"><span class="text-[10px] uppercase tracking-wider opacity-60 mb-1 block text-gray-500 dark:text-gray-400">${topic.subject}</span><div class="flex items-start gap-2"><span class="text-sm font-medium text-gray-800 dark:text-gray-200 leading-tight">${topic.title}</span></div></div>`; }
 
         function renderTopicApp() {
             const subs = { 'Biology': [], 'Chemistry': [], 'Mathematics': [], 'Physics': [] };
@@ -647,7 +750,7 @@
                 const subTotal = topics.filter(t => t.subject === sub).length;
                 const subDone = topics.filter(t => t.subject === sub && t.status === 'Complete').length;
                 const c = sub === 'Biology' ? 'text-notion-bio' : sub === 'Chemistry' ? 'text-notion-chem' : sub === 'Mathematics' ? 'text-notion-math' : 'text-notion-phy';
-                return `<li class="flex justify-between items-center"><span class="${c} font-medium">${sub}</span><span>${subDone}/${subTotal} <span class="text-gray-500 text-xs">(${subTotal ? Math.round((subDone/subTotal)*100) : 0}%)</span></span></li>`;
+                return `<li class="flex justify-between items-center"><span class="${c} font-medium">${sub}</span><span class="text-gray-700 dark:text-gray-300">${subDone}/${subTotal} <span class="text-gray-400 text-xs">(${subTotal ? Math.round((subDone/subTotal)*100) : 0}%)</span></span></li>`;
             }).join('');
 
             updateTopicChart(todo.length, prog.length, comp.length);
@@ -656,8 +759,15 @@
 
         function updateTopicChart(todo, prog, comp) {
             const ctx = document.getElementById('statusChart').getContext('2d');
+            // Theme-aware colors
+            const isDark = settings.theme === 'dark';
+            const emptyColor = isDark ? '#27272a' : '#e4e4e7'; // gray-800 or gray-200
+            const textColor = isDark ? '#ffffff' : '#18181b';
+            const subTextColor = isDark ? '#9ca3af' : '#71717a';
+
             if (topicChartInstance) { 
                 topicChartInstance.data.datasets[0].data = [todo, comp, prog]; 
+                topicChartInstance.data.datasets[0].backgroundColor = [emptyColor, '#22c55e', '#eab308'];
                 topicChartInstance.update(); 
             } 
             else {
@@ -668,7 +778,7 @@
                         labels: ['To-do', 'Complete', 'In progress'], 
                         datasets: [{ 
                             data: [todo, comp, prog], 
-                            backgroundColor: ['#e5e7eb', '#1dd1a1', '#feca57'], 
+                            backgroundColor: [emptyColor, '#22c55e', '#eab308'], 
                             borderWidth: 0, 
                             hoverOffset: 4 
                         }] 
@@ -677,9 +787,9 @@
                         responsive: true, 
                         maintainAspectRatio: false, 
                         plugins: { 
-                            legend: { position: 'bottom', labels: { color: '#9ca3af', usePointStyle: true, padding: 20 } }, 
+                            legend: { position: 'bottom', labels: { color: subTextColor, usePointStyle: true, padding: 20 } }, 
                             datalabels: { 
-                                color: '#1f2937', 
+                                color: isDark ? '#1f2937' : '#ffffff', // Contrast text inside segments
                                 font: { weight: 'bold', size: 12 }, 
                                 textAlign: 'center',
                                 formatter: (value, ctx) => { 
@@ -701,13 +811,13 @@
                             var fontSize = (height / 114).toFixed(2);
                             ctx.font = "bold " + fontSize + "em sans-serif";
                             ctx.textBaseline = "middle";
-                            ctx.fillStyle = "#ffffff";
+                            ctx.fillStyle = textColor;
                             var sum = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
                             var text = sum, textX = Math.round((width - ctx.measureText(text).width) / 2), textY = height / 2.2;
                             ctx.fillText(text, textX, textY);
                             var fontSize2 = (height / 300).toFixed(2);
                             ctx.font = fontSize2 + "em sans-serif";
-                            ctx.fillStyle = "#9ca3af";
+                            ctx.fillStyle = subTextColor;
                             var text2 = "Total", textX2 = Math.round((width - ctx.measureText(text2).width) / 2), textY2 = height / 1.8;
                             ctx.fillText(text2, textX2, textY2);
                             ctx.save();
@@ -787,30 +897,30 @@
                 const taskPct = totalTopics > 0 ? (doneTopics / totalTopics) * 100 : 0;
 
                 const daysLeftText = daysLeft < 0 ? "Exam Passed" : daysLeft === 0 ? "Today!" : `${daysLeft} days left`;
-                const daysColor = daysLeft <= 3 && daysLeft >= 0 ? "text-red-400" : "text-gray-400";
+                const daysColor = daysLeft <= 3 && daysLeft >= 0 ? "text-red-500" : "text-gray-400";
 
                 const topicsHtml = exam.topics.map(t => `
                     <div class="flex items-center gap-2 group/item">
-                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleExamTopic(${exam.id}, ${t.id})" class="rounded bg-gray-700 border-gray-600 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
-                        <span class="text-sm ${t.done ? 'line-through text-gray-500' : 'text-gray-300'} flex-grow truncate">${t.name}</span>
-                        <button onclick="deleteExamTopic(${exam.id}, ${t.id})" class="opacity-0 group-hover/item:opacity-100 text-gray-600 hover:text-red-400"><i data-lucide="x" class="w-3 h-3"></i></button>
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleExamTopic(${exam.id}, ${t.id})" class="rounded bg-gray-100 dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                        <span class="text-sm ${t.done ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-700 dark:text-gray-300'} flex-grow truncate">${t.name}</span>
+                        <button onclick="deleteExamTopic(${exam.id}, ${t.id})" class="opacity-0 group-hover/item:opacity-100 text-gray-400 hover:text-red-500"><i data-lucide="x" class="w-3 h-3"></i></button>
                     </div>
                 `).join('');
 
                 const card = document.createElement('div');
-                card.className = 'bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col gap-4';
+                card.className = 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-5 shadow-lg flex flex-col gap-4 transition-colors duration-300';
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <h3 class="text-lg font-bold text-gray-100">${exam.name}</h3>
+                            <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">${exam.name}</h3>
                             <div class="text-xs ${daysColor} font-mono mt-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${daysLeftText} (${exam.date})</div>
                         </div>
-                        <button onclick="deleteExam(${exam.id})" class="text-gray-600 hover:text-red-400 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <button onclick="deleteExam(${exam.id})" class="text-gray-400 hover:text-red-500 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
-                    <div><div class="flex justify-between text-[10px] text-gray-500 uppercase tracking-wider mb-1"><span>Time Elapsed</span><span>${Math.round(timePct)}%</span></div><div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden"><div class="bg-indigo-500 h-1.5 rounded-full transition-all duration-500" style="width: ${timePct}%"></div></div></div>
-                    <div><div class="flex justify-between text-[10px] text-gray-500 uppercase tracking-wider mb-1"><span>Progress (${doneTopics}/${totalTopics})</span><span>${Math.round(taskPct)}%</span></div><div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden"><div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: ${taskPct}%"></div></div></div>
-                    <div class="flex-grow bg-gray-800/30 rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto custom-scrollbar">${topicsHtml.length ? topicsHtml : '<div class="text-xs text-gray-600 text-center italic">No topics added</div>'}</div>
-                    <div class="flex gap-2 mt-auto"><input type="text" placeholder="Add topic..." onkeydown="if(event.key==='Enter') addExamTopic(${exam.id}, this)" class="bg-gray-800 border border-gray-700 text-xs rounded px-2 py-1.5 flex-grow text-white focus:border-indigo-500 outline-none"><button onclick="addExamTopic(${exam.id}, this.previousElementSibling)" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 rounded px-2"><i data-lucide="plus" class="w-3 h-3"></i></button></div>
+                    <div><div class="flex justify-between text-[10px] text-gray-500 uppercase tracking-wider mb-1"><span>Time Elapsed</span><span>${Math.round(timePct)}%</span></div><div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 overflow-hidden"><div class="bg-indigo-500 h-1.5 rounded-full transition-all duration-500" style="width: ${timePct}%"></div></div></div>
+                    <div><div class="flex justify-between text-[10px] text-gray-500 uppercase tracking-wider mb-1"><span>Progress (${doneTopics}/${totalTopics})</span><span>${Math.round(taskPct)}%</span></div><div class="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-1.5 overflow-hidden"><div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: ${taskPct}%"></div></div></div>
+                    <div class="flex-grow bg-gray-50 dark:bg-gray-800/30 rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto custom-scrollbar">${topicsHtml.length ? topicsHtml : '<div class="text-xs text-gray-400 text-center italic">No topics added</div>'}</div>
+                    <div class="flex gap-2 mt-auto"><input type="text" placeholder="Add topic..." onkeydown="if(event.key==='Enter') addExamTopic(${exam.id}, this)" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs rounded px-2 py-1.5 flex-grow text-gray-900 dark:text-white focus:border-indigo-500 outline-none"><button onclick="addExamTopic(${exam.id}, this.previousElementSibling)" class="bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-300 rounded px-2"><i data-lucide="plus" class="w-3 h-3"></i></button></div>
                 `;
                 container.appendChild(card);
             });
@@ -881,7 +991,6 @@
             } else {
                 const newId = Date.now();
                 const today = new Date().toISOString().split('T')[0];
-                // CHANGED: Use unshift instead of push so new notes appear at TOP by default
                 notes.unshift({ id: newId, title, content, subject, createdDate: today });
             }
             renderNotesApp();
@@ -909,34 +1018,30 @@
             
             [btnAll, btnNote, btnQuest].forEach(b => {
                 b.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
-                b.classList.add('text-gray-400', 'hover:text-gray-200');
+                b.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200');
             });
 
             const activeBtn = document.getElementById(`note-tab-${tab}`);
             if(activeBtn) {
                 activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                activeBtn.classList.remove('text-gray-400');
+                activeBtn.classList.remove('text-gray-500', 'dark:text-gray-400');
             }
 
             renderNotesApp();
         }
 
         function moveNote(id, direction) {
-            // 1. Find the note in the MAIN 'notes' array
             const realIndex = notes.findIndex(n => n.id === id);
             if (realIndex === -1) return;
 
-            // 2. Find the VISIBLE list based on current filter
             let visibleNotes = notes;
             if (currentNoteFilter !== 'All') {
                 visibleNotes = notes.filter(n => n.subject === currentNoteFilter);
             }
 
-            // 3. Find where the current note is in the VISIBLE list
             const visibleIndex = visibleNotes.findIndex(n => n.id === id);
             if (visibleIndex === -1) return;
 
-            // 4. Determine the swap target in the VISIBLE list
             let targetVisibleIndex;
             if (direction === 'up') {
                 targetVisibleIndex = visibleIndex - 1;
@@ -944,32 +1049,14 @@
                 targetVisibleIndex = visibleIndex + 1;
             }
 
-            // Boundary checks
             if (targetVisibleIndex < 0 || targetVisibleIndex >= visibleNotes.length) return;
 
-            // 5. Get the actual object of the target note
             const targetNote = visibleNotes[targetVisibleIndex];
-            
-            // 6. Find the target's index in the MAIN array
             const targetRealIndex = notes.findIndex(n => n.id === targetNote.id);
 
-            // 7. Swap in the MAIN array
             saveStateToHistory();
-            
-            // Remove the note from its old position
             const [movedNote] = notes.splice(realIndex, 1);
-            
-            // If we are moving 'down' effectively (to a higher index), we might need to adjust logic slightly
-            // But since we removed it first, the indices shift.
-            // However, finding the *fresh* index of the target is safer.
             const newTargetIndex = notes.findIndex(n => n.id === targetNote.id);
-            
-            // Insert it relative to the target
-            // If direction was 'up' (visually), we want to be BEFORE the target (index)
-            // If direction was 'down' (visually), we want to be AFTER the target (index + 1)
-            
-            // WAIT: We want to swap positions. If I am moving UP visually, I want to take the Target's slot, and push Target down.
-            // If I am moving DOWN visually, I want to take the slot AFTER Target.
             
             if (direction === 'up') {
                 notes.splice(newTargetIndex, 0, movedNote);
@@ -994,19 +1081,18 @@
             const contentEl = document.getElementById('view-note-content');
             const deleteBtn = document.getElementById('btn-delete-note');
 
-            // Simple color logic for Question vs Note
             let colorClass = 'text-gray-400';
-            let bgClass = 'bg-gray-800/50';
+            let bgClass = 'bg-gray-50 dark:bg-gray-800/50';
             
             if (note.subject === 'Question') { 
-                colorClass = 'text-notion-yellow'; // Amber for Question
-                bgClass = 'bg-notion-yellow/10 border-notion-yellow/20'; 
+                colorClass = 'text-notion-yellow'; 
+                bgClass = 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700/30'; 
             } else if (note.subject === 'Note') { 
-                colorClass = 'text-notion-green'; // Emerald for Note
-                bgClass = 'bg-notion-green/10 border-notion-green/20'; 
+                colorClass = 'text-notion-green'; 
+                bgClass = 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700/30'; 
             }
 
-            header.className = `p-4 border-b flex justify-between items-start rounded-t-xl transition-colors ${bgClass}`;
+            header.className = `p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-start rounded-t-xl transition-colors ${bgClass}`;
             subjectEl.className = `text-xs font-bold uppercase tracking-wider ${colorClass}`;
             iconEl.className = `w-4 h-4 ${colorClass}`;
             
@@ -1026,7 +1112,6 @@
             const empty = document.getElementById('notes-empty');
             container.innerHTML = '';
 
-            // Filter Logic
             let filteredNotes = notes;
             if (currentNoteFilter !== 'All') {
                 filteredNotes = notes.filter(n => n.subject === currentNoteFilter);
@@ -1035,32 +1120,28 @@
             if (filteredNotes.length === 0) { empty.classList.remove('hidden'); return; }
             empty.classList.add('hidden');
 
-            // CHANGED: Removed sorting by ID so manual order persists
-            // const sortedNotes = [...filteredNotes].sort((a, b) => b.id - a.id);
-            const sortedNotes = filteredNotes; // Use array order directly
+            const sortedNotes = filteredNotes; 
 
             sortedNotes.forEach(note => {
                 let colorClass = 'text-gray-400';
-                let borderClass = 'border-gray-800 hover:border-gray-700';
-                let bgClass = 'bg-gray-800/30';
+                let borderClass = 'border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700';
+                let bgClass = 'bg-gray-50 dark:bg-gray-800/30';
                 
                 if (note.subject === 'Question') {
                     colorClass = 'text-notion-yellow';
-                    borderClass = 'border-notion-yellow/20 hover:border-notion-yellow/40';
-                    bgClass = 'bg-notion-yellow/5';
+                    borderClass = 'border-yellow-200 dark:border-yellow-900/50 hover:border-yellow-300 dark:hover:border-yellow-700';
+                    bgClass = 'bg-yellow-50 dark:bg-yellow-900/10';
                 } else if (note.subject === 'Note') {
                     colorClass = 'text-notion-green';
-                    borderClass = 'border-notion-green/20 hover:border-notion-green/40';
-                    bgClass = 'bg-notion-green/5';
+                    borderClass = 'border-green-200 dark:border-green-900/50 hover:border-green-300 dark:hover:border-green-700';
+                    bgClass = 'bg-green-50 dark:bg-green-900/10';
                 }
 
                 const previewText = note.content.length > 120 ? note.content.substring(0, 120) + "..." : note.content;
-                // We format the preview so bold text shows up even in the card
                 const parsedPreview = formatContent(previewText);
 
                 const card = document.createElement('div');
-                card.className = `card-hover rounded-xl border ${borderClass} shadow-lg overflow-hidden flex flex-col transition-all cursor-pointer group bg-gray-900 relative`;
-                // Add onclick but ensure buttons don't trigger it
+                card.className = `card-hover rounded-xl border ${borderClass} shadow-lg overflow-hidden flex flex-col transition-all cursor-pointer group bg-white dark:bg-gray-900 relative`;
                 card.onclick = (e) => {
                     if (!e.target.closest('button')) viewNote(note.id);
                 };
@@ -1072,23 +1153,22 @@
                                 <i data-lucide="sticky-note" class="w-3 h-3 ${colorClass}"></i>
                                 <span class="text-[10px] font-bold uppercase tracking-wider ${colorClass}">${note.subject}</span>
                             </div>
-                            <h3 class="text-lg font-bold text-gray-100 leading-tight group-hover:text-indigo-400 transition-colors pr-8">${note.title}</h3>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight group-hover:text-indigo-500 transition-colors pr-8">${note.title}</h3>
                         </div>
                         
-                        <!-- UPDATED: Move Buttons -->
                         <div class="flex flex-col gap-1 absolute top-2 right-2 opacity-50 hover:opacity-100 transition-opacity">
-                            <button onclick="moveNote(${note.id}, 'up')" class="p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-white" title="Move Up">
+                            <button onclick="moveNote(${note.id}, 'up')" class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" title="Move Up">
                                 <i data-lucide="chevron-up" class="w-3 h-3"></i>
                             </button>
-                            <button onclick="moveNote(${note.id}, 'down')" class="p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-white" title="Move Down">
+                            <button onclick="moveNote(${note.id}, 'down')" class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" title="Move Down">
                                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
                             </button>
                         </div>
                     </div>
                     <div class="p-4 flex-grow">
-                        <p class="text-gray-400 text-sm font-mono leading-relaxed break-words line-clamp-4">${parsedPreview}</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm font-mono leading-relaxed break-words line-clamp-4">${parsedPreview}</p>
                     </div>
-                     <div class="px-4 py-3 bg-gray-900/50 border-t border-gray-800 flex justify-between items-center text-xs text-gray-500">
+                     <div class="px-4 py-3 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-800 flex justify-between items-center text-xs text-gray-500">
                         <span>${note.createdDate}</span>
                          <span class="text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">View details <i data-lucide="arrow-right" class="w-3 h-3"></i></span>
                     </div>
@@ -1118,6 +1198,19 @@
         function deleteEntry(id) { saveStateToHistory(); entries = entries.filter(e => e.id !== id); renderTimeApp(); saveFile(); }
         function clearAllTimeData() { if(confirm("Delete all reading history?")) { saveStateToHistory(); entries = []; renderTimeApp(); saveFile(); } }
 
+        function setChartRange(days) {
+            currentChartRange = days;
+            [7, 14, 21, 30].forEach(d => {
+                const btn = document.getElementById(`btn-range-${d}`);
+                if(d === days) {
+                    btn.className = "px-3 py-1 rounded text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm";
+                } else {
+                    btn.className = "px-3 py-1 rounded text-xs font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200";
+                }
+            });
+            renderTimeApp();
+        }
+
         function renderTimeApp() {
             const tbody = document.getElementById('dataTableBody');
             const empty = document.getElementById('emptyState');
@@ -1127,25 +1220,132 @@
                 empty.classList.add('hidden');
                 entries.forEach(e => {
                     const tr = document.createElement('tr');
-                    tr.className = 'hover:bg-gray-800/50 transition group';
-                    tr.innerHTML = `<td class="p-3 text-gray-300 font-mono text-sm">${e.date}</td><td class="p-3 text-gray-300 font-medium"><div class="flex items-center"><input type="number" value="${e.time}" min="1" onchange="updateEntryTime(${e.id}, this.value)" class="bg-transparent border-b border-gray-700 hover:border-gray-500 focus:border-purple-500 text-white w-16 text-center focus:outline-none transition-colors py-1"><span class="text-gray-500 text-xs ml-2">min</span></div></td><td class="p-3 text-right"><button onclick="deleteEntry(${e.id})" class="text-gray-600 hover:text-red-400 transition p-1 rounded hover:bg-gray-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>`;
+                    tr.className = 'hover:bg-gray-100 dark:hover:bg-gray-800/50 transition group';
+                    tr.innerHTML = `<td class="p-3 text-gray-700 dark:text-gray-300 font-mono text-sm">${e.date}</td><td class="p-3 text-gray-700 dark:text-gray-300 font-medium"><div class="flex items-center"><input type="number" value="${e.time}" min="1" onchange="updateEntryTime(${e.id}, this.value)" class="bg-transparent border-b border-gray-300 dark:border-gray-700 hover:border-gray-500 focus:border-indigo-500 text-gray-900 dark:text-white w-16 text-center focus:outline-none transition-colors py-1"><span class="text-gray-500 text-xs ml-2">min</span></div></td><td class="p-3 text-right"><button onclick="deleteEntry(${e.id})" class="text-gray-400 hover:text-red-500 transition p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>`;
                     tbody.appendChild(tr);
                 });
             }
+            
+            const titleEl = document.getElementById('performanceTitle');
+            if(titleEl) titleEl.innerText = `Performance (Last ${currentChartRange} Days)`;
+
             const ctx = document.getElementById('readingChart').getContext('2d');
             const labels = [], keys = [], map = {}, bg = [], border = [];
-            for (let i = 13; i >= 0; i--) {
-                const d = new Date(); d.setDate(d.getDate() - i); const k = getLocalYMD(d);
-                labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })); keys.push(k); map[k] = 0;
-                const h = Math.floor((13 - i) * (300 / 14)); bg.push(`hsla(${h}, 70%, 60%, 0.6)`); border.push(`hsla(${h}, 70%, 60%, 1)`);
+            
+            // Arrays to store full date info for tooltip
+            const tooltipDates = []; 
+
+            for (let i = currentChartRange - 1; i >= 0; i--) {
+                const d = new Date(); 
+                d.setDate(d.getDate() - i); 
+                const k = getLocalYMD(d);
+                
+                // Store short label
+                labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })); 
+                
+                // Store full date for tooltip
+                tooltipDates.push(d);
+
+                keys.push(k); 
+                map[k] = 0;
+                
+                // Updated color logic to avoid purple, using Blue/Indigo range
+                const h = Math.floor(((currentChartRange - 1) - i) * (60 / currentChartRange) + 200); // 200-260 hue (Blue to Indigo)
+                bg.push(`hsla(${h}, 70%, 60%, 0.6)`); 
+                border.push(`hsla(${h}, 70%, 60%, 1)`);
             }
+            
             let total = 0;
-            entries.forEach(e => { if (map.hasOwnProperty(e.date)) { map[e.date] += e.time; total += e.time; } });
+            entries.forEach(e => { 
+                if (map.hasOwnProperty(e.date)) { 
+                    map[e.date] += e.time; 
+                    total += e.time; 
+                } 
+            });
+            
             document.getElementById('totalTimeDisplay').innerText = `${total}m`;
-            document.getElementById('avgTimeDisplay').innerText = `${Math.round(total/14)}m`;
+            document.getElementById('avgTimeDisplay').innerText = `${Math.round(total/currentChartRange)}m`;
 
             if (timeChartInstance) timeChartInstance.destroy();
-            timeChartInstance = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Minutes', data: keys.map(k => map[k]), backgroundColor: bg, borderColor: border, borderWidth: 2, borderRadius: 6, barPercentage: 0.6, categoryPercentage: 0.8 }] }, plugins: [{ id: 'topLabels', afterDatasetsDraw(chart) { const { ctx } = chart; chart.data.datasets.forEach((ds, i) => { chart.getDatasetMeta(i).data.forEach((bar, index) => { const d = ds.data[index]; if (d > 0) { ctx.fillStyle = '#d1d5db'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(d, bar.x, bar.y - 5); } }); }); } }], options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 20 } }, scales: { y: { beginAtZero: true, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af', maxRotation: 45, minRotation: 0 } } }, plugins: { legend: { display: false } } } });
+            
+            const isDark = settings.theme === 'dark';
+            const gridColor = isDark ? '#374151' : '#e5e7eb';
+            const tickColor = isDark ? '#9ca3af' : '#6b7280';
+
+            timeChartInstance = new Chart(ctx, { 
+                type: 'bar', 
+                data: { 
+                    labels, 
+                    datasets: [{ 
+                        label: 'Minutes', 
+                        data: keys.map(k => map[k]), 
+                        backgroundColor: bg, 
+                        borderColor: border, 
+                        borderWidth: 2, 
+                        borderRadius: 6, 
+                        barPercentage: 0.6, 
+                        categoryPercentage: 0.8 
+                    }] 
+                }, 
+                plugins: [{ 
+                    id: 'topLabels', 
+                    afterDatasetsDraw(chart) { 
+                        const { ctx } = chart; 
+                        chart.data.datasets.forEach((ds, i) => { 
+                            chart.getDatasetMeta(i).data.forEach((bar, index) => { 
+                                const d = ds.data[index]; 
+                                if (d > 0) { 
+                                    ctx.fillStyle = isDark ? '#d1d5db' : '#374151'; 
+                                    ctx.font = 'bold 12px sans-serif'; 
+                                    ctx.textAlign = 'center'; 
+                                    ctx.textBaseline = 'bottom'; 
+                                    ctx.fillText(d, bar.x, bar.y - 5); 
+                                } 
+                            }); 
+                        }); 
+                    } 
+                }], 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    layout: { padding: { top: 20 } }, 
+                    scales: { 
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: gridColor }, 
+                            ticks: { color: tickColor } 
+                        }, 
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { 
+                                color: tickColor, 
+                                maxRotation: 45, 
+                                minRotation: 0,
+                                autoSkip: true,
+                                maxTicksLimit: 14 
+                            } 
+                        } 
+                    }, 
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    // Get the date object we stored earlier
+                                    const dateObj = tooltipDates[context[0].dataIndex];
+                                    // Format: "Mon, Nov 25"
+                                    return dateObj.toLocaleDateString('en-US', { 
+                                        weekday: 'short', 
+                                        month: 'short', 
+                                        day: 'numeric' 
+                                    });
+                                }
+                            }
+                        }
+                    } 
+                } 
+            });
+            
             if(typeof lucide !== 'undefined') lucide.createIcons();
         }
 
