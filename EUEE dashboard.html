@@ -1,0 +1,1157 @@
+<html lang="en" class="dark"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EUEE Dashboard</title>
+    <!-- Favicon (Make sure this file is also in the folder if you have it) -->
+    <link rel="icon" type="image/png" sizes="128x128" href="icon128.png">
+
+    <!-- 1. LOCAL TAILWIND CSS -->
+    <script src="tailwindcss.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gray: { 750: '#2d3748', 850: '#1a202c', 900: '#111827', 950: '#0d1117' },
+                        notion: { red: '#ff6b6b', yellow: '#feca57', green: '#1dd1a1', bio: '#e17055', chem: '#00b894', math: '#0984e3', phy: '#a29bfe' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- 2. LOCAL CHART JS -->
+    <script src="chart.js"></script>
+    <!-- 3. LOCAL CHART PLUGIN -->
+    <script src="chartjs-plugin-datalabels.js"></script>
+    <!-- 4. LOCAL ICONS -->
+    <script src="lucide.js"></script>
+
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
+        .dragging { opacity: 0.5; border: 2px dashed #6366f1; }
+        .drop-zone { transition: background-color 0.2s; }
+        .drop-zone.drag-over { background-color: rgba(55, 65, 81, 0.5); border: 2px dashed #4b5563; }
+        [contenteditable]:focus { outline: 2px solid #6366f1; background-color: #1f2937; border-radius: 4px; padding: 2px; }
+        
+        /* --- Spoiler & Bold CSS --- */
+        .spoiler {
+            background-color: #374151;
+            color: transparent;
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 2px 4px;
+            user-select: none;
+            transition: all 0.2s ease-in-out;
+        }
+        .spoiler:hover { background-color: #4b5563; }
+        .spoiler.revealed { background-color: transparent; color: inherit; user-select: text; }
+        
+        /* Custom Bold Style */
+        strong { color: #e2e8f0; font-weight: 800; }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden">
+
+    <nav class="bg-gray-800 border-b border-gray-700 flex-shrink-0">
+        <div class="w-full px-4 py-2 flex justify-between items-center">
+            <div class="flex space-x-2 bg-gray-900 p-1 rounded-lg overflow-x-auto">
+                <button onclick="switchMainTab('topics')" id="nav-btn-topics" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all bg-indigo-600 text-white shadow-sm whitespace-nowrap">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Topics
+                </button>
+                <button onclick="switchMainTab('exams')" id="nav-btn-exams" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-400 hover:text-gray-200 whitespace-nowrap">
+                    <i data-lucide="calendar-clock" class="w-4 h-4"></i> Exams
+                </button>
+                <button onclick="switchMainTab('notes')" id="nav-btn-notes" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-400 hover:text-gray-200 whitespace-nowrap">
+                    <i data-lucide="sticky-note" class="w-4 h-4"></i> Notes
+                </button>
+                <button onclick="switchMainTab('time')" id="nav-btn-time" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-400 hover:text-gray-200 whitespace-nowrap">
+                    <i data-lucide="clock" class="w-4 h-4"></i> Reading
+                </button>
+            </div>
+            <div class="flex gap-2 shrink-0">
+                <button id="btn-undo" onclick="undoLastAction()" disabled class="flex items-center gap-2 px-3 py-1.5 bg-gray-700 text-gray-400 font-bold rounded-md transition-all opacity-50 cursor-not-allowed hover:bg-gray-600">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i> <span class="hidden sm:inline">Undo</span>
+                </button>
+                <div class="h-8 w-px bg-gray-600 mx-1"></div>
+                <button id="btn-open" onclick="openFileNew()" class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-md transition-colors shadow-sm ring-1 ring-blue-400/50">
+                    <i data-lucide="folder-open" class="w-4 h-4"></i> <span class="hidden sm:inline">Switch File</span>
+                </button>
+                <button id="btn-save" onclick="saveFile()" disabled class="flex items-center gap-2 px-3 py-1.5 bg-gray-600 text-gray-400 cursor-not-allowed text-xs font-bold rounded-md transition-colors shadow-sm ring-1 ring-gray-500/50">
+                    <i data-lucide="save" class="w-4 h-4"></i> <span class="hidden sm:inline">Save</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="data-overlay" class="absolute inset-0 z-40 bg-gray-950/95 flex flex-col items-center justify-center text-center p-6 backdrop-blur-sm">
+        <div class="bg-gray-900 p-8 rounded-2xl border border-gray-800 shadow-2xl max-w-lg w-full">
+            <div id="overlay-initial" class="flex flex-col items-center">
+                <div class="w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-6"><i data-lucide="database" class="w-8 h-8 text-indigo-500"></i></div>
+                <h2 class="text-2xl font-bold text-gray-100 mb-2">Load Your Data</h2>
+                <p class="text-gray-400 mb-8">Connect to your local <code>data.json</code> file.</p>
+                <button onclick="openFileNew()" class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-indigo-500/25 group">
+                    <i data-lucide="folder-search" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> Select data.json
+                </button>
+            </div>
+            <div id="overlay-reconnect" class="hidden flex flex-col items-center">
+                <div class="w-16 h-16 bg-emerald-900/30 rounded-full flex items-center justify-center mb-6"><i data-lucide="file-check" class="w-8 h-8 text-emerald-500"></i></div>
+                <h2 class="text-2xl font-bold text-gray-100 mb-2">File Found</h2>
+                <p class="text-gray-400 mb-6">Reload your previous file.</p>
+                <button onclick="verifyAndLoad()" class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-emerald-500/25 animate-pulse">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i> Reload data.json
+                </button>
+                <button onclick="forgetFile()" class="mt-4 text-sm text-gray-500 hover:text-gray-300 underline">Use a different file</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-topics" class="flex-grow flex flex-col overflow-hidden h-full relative">
+        <header class="bg-gray-900 border-b border-gray-800 shadow-lg z-30 flex-shrink-0">
+            <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
+                <!-- Modified: Sections moved to Left -->
+                <div class="flex bg-gray-800 rounded-lg p-1 gap-1">
+                    <button onclick="switchTopicSubTab('topics')" id="tab-topics-sub" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm">All Subjects</button>
+                    <button onclick="switchTopicSubTab('analytics')" id="tab-analytics-sub" class="px-4 py-1.5 rounded-md text-sm font-medium hover:text-gray-200 transition-all text-gray-400">Analytics</button>
+                </div>
+                
+                <div class="flex-grow"></div> <!-- Spacer -->
+                
+                <button onclick="openAddModal()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-sm"><i data-lucide="plus" class="w-4 h-4"></i> New Topic</button>
+            </div>
+        </header>
+        <main class="flex-grow overflow-hidden relative w-full">
+            <div id="view-topics" class="w-full h-full p-4 sm:p-6 overflow-y-auto pb-20">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 min-h-min">
+                    <div class="flex flex-col gap-4"><div class="flex items-center justify-between bg-notion-bio/10 p-3 rounded-lg border border-notion-bio/20 sticky top-0 backdrop-blur-md z-10"><span class="font-bold text-notion-bio">Biology</span><span class="text-xs bg-notion-bio/20 text-notion-bio px-2 py-0.5 rounded-full" id="count-Bio">0</span></div><div id="col-Bio" class="flex flex-col gap-3"></div></div>
+                    <div class="flex flex-col gap-4"><div class="flex items-center justify-between bg-notion-chem/10 p-3 rounded-lg border border-notion-chem/20 sticky top-0 backdrop-blur-md z-10"><span class="font-bold text-notion-chem">Chemistry</span><span class="text-xs bg-notion-chem/20 text-notion-chem px-2 py-0.5 rounded-full" id="count-Chem">0</span></div><div id="col-Chem" class="flex flex-col gap-3"></div></div>
+                    <div class="flex flex-col gap-4"><div class="flex items-center justify-between bg-notion-math/10 p-3 rounded-lg border border-notion-math/20 sticky top-0 backdrop-blur-md z-10"><span class="font-bold text-notion-math">Mathematics</span><span class="text-xs bg-notion-math/20 text-notion-math px-2 py-0.5 rounded-full" id="count-Math">0</span></div><div id="col-Math" class="flex flex-col gap-3"></div></div>
+                    <div class="flex flex-col gap-4"><div class="flex items-center justify-between bg-notion-phy/10 p-3 rounded-lg border border-notion-phy/20 sticky top-0 backdrop-blur-md z-10"><span class="font-bold text-notion-phy">Physics</span><span class="text-xs bg-notion-phy/20 text-notion-phy px-2 py-0.5 rounded-full" id="count-Phy">0</span></div><div id="col-Phy" class="flex flex-col gap-3"></div></div>
+                </div>
+            </div>
+            <div id="view-analytics" class="w-full h-full p-4 sm:p-6 overflow-hidden flex flex-col lg:flex-row gap-6 hidden">
+                <div class="w-full lg:w-1/3 flex-shrink-0 flex flex-col gap-6 overflow-y-auto">
+                    <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg">
+                        <h2 class="text-lg font-semibold text-gray-200 mb-4 flex items-center gap-2"><i data-lucide="pie-chart" class="w-5 h-5 text-indigo-400"></i>Progress</h2>
+                        <div class="relative w-full aspect-square max-h-[300px] mx-auto"><canvas id="statusChart"></canvas></div>
+                        <div class="mt-6 grid grid-cols-3 gap-2 text-center">
+                            <div class="p-3 bg-gray-800 rounded-lg"><div class="text-2xl font-bold text-notion-red" id="stat-todo">0</div><div class="text-xs text-gray-400 uppercase tracking-wider">To Do</div></div>
+                            <div class="p-3 bg-gray-800 rounded-lg"><div class="text-2xl font-bold text-notion-yellow" id="stat-prog">0</div><div class="text-xs text-gray-400 uppercase tracking-wider">In Prog</div></div>
+                            <div class="p-3 bg-gray-800 rounded-lg"><div class="text-2xl font-bold text-notion-green" id="stat-comp">0</div><div class="text-xs text-gray-400 uppercase tracking-wider">Done</div></div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex-grow"><h3 class="text-sm font-bold text-gray-400 uppercase mb-4">Summary</h3><ul id="subject-summary" class="space-y-3 text-sm text-gray-300"></ul></div>
+                </div>
+                <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 overflow-hidden h-full rounded-xl bg-gray-900/50 border border-gray-800/50 p-4">
+                    <div class="flex flex-col h-full min-h-0 bg-gray-900 rounded-lg border border-gray-800 drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'To Do')"><div class="p-3 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-gray-900 z-10 rounded-t-lg"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-red"></div><span class="font-semibold text-gray-200">To Do</span></div><span class="text-xs text-gray-500" id="count-kanban-todo">0</span></div><div id="kanban-todo" class="p-2 flex-grow overflow-y-auto space-y-2"></div></div>
+                    <div class="flex flex-col h-full min-h-0 bg-gray-900 rounded-lg border border-gray-800 drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'In Progress')"><div class="p-3 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-gray-900 z-10 rounded-t-lg"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-yellow"></div><span class="font-semibold text-gray-200">In Progress</span></div><span class="text-xs text-gray-500" id="count-kanban-prog">0</span></div><div id="kanban-prog" class="p-2 flex-grow overflow-y-auto space-y-2"></div></div>
+                    <div class="flex flex-col h-full min-h-0 bg-gray-900 rounded-lg border border-gray-800 drop-zone" ondragover="handleDragOver(event)" ondrop="handleDrop(event, 'Complete')"><div class="p-3 border-b border-gray-800 flex justify-between items-center sticky top-0 bg-gray-900 z-10 rounded-t-lg"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-green"></div><span class="font-semibold text-gray-200">Complete</span></div><span class="text-xs text-gray-500" id="count-kanban-comp">0</span></div><div id="kanban-comp" class="p-2 flex-grow overflow-y-auto space-y-2"></div></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="app-exams" class="flex-grow flex flex-col overflow-hidden h-full hidden">
+        <header class="bg-gray-900 border-b border-gray-800 shadow-lg z-30 flex-shrink-0">
+            <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+                <h1 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Exam Countdown Tracker</h1>
+                <button onclick="openExamModal()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i> New Exam
+                </button>
+            </div>
+        </header>
+        <main class="flex-grow p-6 overflow-y-auto">
+            <div id="exams-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                </div>
+            <div id="exams-empty" class="hidden text-center text-gray-500 mt-20">
+                <i data-lucide="calendar-off" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                <p>No exams tracked yet. Add one to get started!</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notes App with new Buttons -->
+    <div id="app-notes" class="flex-grow flex flex-col overflow-hidden h-full hidden">
+        <header class="bg-gray-900 border-b border-gray-800 shadow-lg z-30 flex-shrink-0">
+            <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
+                <!-- New Filter Buttons on Left -->
+                <div class="flex bg-gray-800 rounded-lg p-1 gap-1">
+                    <button onclick="switchNoteTab('All')" id="note-tab-All" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm">All</button>
+                    <button onclick="switchNoteTab('Note')" id="note-tab-Note" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-gray-400 hover:text-gray-200">Notes</button>
+                    <button onclick="switchNoteTab('Question')" id="note-tab-Question" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-gray-400 hover:text-gray-200">Questions</button>
+                </div>
+                
+                <div class="flex-grow"></div>
+
+                <button onclick="openNoteModal()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-sm">
+                    <i data-lucide="plus" class="w-4 h-4"></i> New Note
+                </button>
+            </div>
+        </header>
+        <main class="flex-grow p-6 overflow-y-auto bg-gray-950">
+            <div id="notes-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
+                </div>
+            <div id="notes-empty" class="hidden text-center text-gray-500 mt-20">
+                <i data-lucide="sticky-note" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
+                <p>No notes here yet.</p>
+            </div>
+        </main>
+    </div>
+
+
+    <div id="app-time" class="flex-grow flex flex-col overflow-hidden h-full hidden">
+        <header class="bg-gray-900 border-b border-gray-800 shadow-lg z-20 flex-shrink-0">
+            <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+                <h1 class="text-sm font-bold text-purple-400 uppercase tracking-wider">Reading Tracker</h1>
+                <button onclick="clearAllTimeData()" class="text-xs text-red-400 hover:text-red-300 underline">Reset Logs</button>
+            </div>
+        </header>
+        <main class="flex-grow p-4 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto">
+            <div class="w-full flex flex-col lg:flex-row gap-6 h-full items-start">
+                <section class="w-full lg:w-[400px] flex-shrink-0 flex flex-col gap-6">
+                    <div class="bg-gray-900 rounded-xl p-6 border border-gray-800 shadow-lg">
+                        <h2 class="text-lg font-semibold mb-4 text-gray-200">Log Session</h2>
+                        <form id="logForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                            <div class="flex flex-col gap-1"><label class="text-xs text-gray-400 uppercase font-bold tracking-wider">Date</label><input type="date" id="dateInput" required="" class="bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-purple-500 w-full"></div>
+                            <div class="flex flex-col gap-1"><label class="text-xs text-gray-400 uppercase font-bold tracking-wider">Mins</label><input type="number" id="timeInput" placeholder="30" min="1" required="" class="bg-gray-800 border border-gray-700 rounded p-2 text-white focus:outline-none focus:border-purple-500 w-full"></div>
+                            <button type="submit" class="col-span-1 sm:col-span-2 bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 px-4 rounded transition shadow-md mt-2">Add Entry</button>
+                        </form>
+                    </div>
+                    <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-lg flex-grow flex flex-col overflow-hidden" style="min-height: 400px;">
+                        <div class="p-4 border-b border-gray-800 flex justify-between items-center"><h2 class="text-lg font-semibold text-gray-200">History</h2></div>
+                        <div class="overflow-y-auto flex-grow" style="max-height: 600px;">
+                            <table class="w-full text-left border-collapse"><thead class="bg-gray-800 text-gray-400 sticky top-0 z-10"><tr><th class="p-3 text-xs font-bold uppercase tracking-wider">Date</th><th class="p-3 text-xs font-bold uppercase tracking-wider">Edit Time</th><th class="p-3 text-xs font-bold uppercase tracking-wider text-right">Del</th></tr></thead><tbody id="dataTableBody" class="divide-y divide-gray-800"></tbody></table>
+                            <div id="emptyState" class="p-8 text-center text-gray-500 hidden">No logs found.</div>
+                        </div>
+                    </div>
+                </section>
+                <section class="flex-1 min-w-0 w-full bg-gray-900 rounded-xl border border-gray-800 shadow-lg p-6 flex flex-col">
+                    <div class="mb-6 flex justify-between items-end">
+                        <div><h2 class="text-lg font-semibold text-gray-200">Performance (Last 14 Days)</h2></div>
+                        <div class="flex gap-4"><div class="text-right"><p class="text-[10px] text-gray-400 uppercase">Total</p><p class="text-xl font-bold text-purple-400" id="totalTimeDisplay">0m</p></div><div class="text-right"><p class="text-[10px] text-gray-400 uppercase">Avg</p><p class="text-xl font-bold text-blue-400" id="avgTimeDisplay">0m</p></div></div>
+                    </div>
+                    <div class="relative flex-grow w-full h-[500px] flex items-center justify-center bg-gray-800/30 rounded-lg p-2"><canvas id="readingChart"></canvas></div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="dropdown-menu" class="absolute z-50 w-40 bg-gray-800 rounded-md shadow-xl border border-gray-700 py-1 text-sm hidden">
+        <button onclick="setStatusFromDropdown('To Do')" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-red"></div> Not Started</button>
+        <button onclick="setStatusFromDropdown('In Progress')" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-yellow"></div> In Progress</button>
+        <button onclick="setStatusFromDropdown('Complete')" class="w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-green"></div> Complete</button>
+    </div>
+
+    <div id="add-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-2xl w-full max-w-md p-6">
+            <h2 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2"><i data-lucide="plus-circle" class="text-emerald-500"></i> Add New Topic</h2>
+            <form onsubmit="saveNewTopic(event)" class="flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Subject</label>
+                    <select id="new-topic-subject" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500"><option value="Biology">Biology</option><option value="Chemistry">Chemistry</option><option value="Mathematics">Mathematics</option><option value="Physics">Physics</option></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Topic Title</label>
+                    <input type="text" id="new-topic-title" required class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div class="flex justify-end gap-2 mt-2">
+                    <button type="button" onclick="closeAddModal()" class="px-4 py-2 rounded-md text-gray-400 hover:bg-gray-800 text-sm">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-lg text-sm">Add Topic</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-exam-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-2xl w-full max-w-md p-6">
+            <h2 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2"><i data-lucide="calendar-plus" class="text-emerald-500"></i> New Exam Task</h2>
+            <form onsubmit="saveNewExam(event)" class="flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Exam Name</label>
+                    <input type="text" id="new-exam-name" required placeholder="e.g. Final Maths Exam" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Exam Date</label>
+                    <input type="date" id="new-exam-date" required class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                </div>
+                <div class="flex justify-end gap-2 mt-2">
+                    <button type="button" onclick="closeExamModal()" class="px-4 py-2 rounded-md text-gray-400 hover:bg-gray-800 text-sm">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-lg text-sm">Create Exam</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-note-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-2xl w-full max-w-md p-6">
+            <h2 class="text-lg font-bold text-gray-100 mb-4 flex items-center gap-2" id="note-modal-title"><i data-lucide="sticky-note" class="text-emerald-500"></i> New Note</h2>
+            <form onsubmit="saveNewNote(event)" class="flex flex-col gap-4">
+                 <div>
+                    <!-- Updated Dropdown -->
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Type</label>
+                    <select id="new-note-subject" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                        <option value="Question">Question</option>
+                        <option value="Note">Note</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Title</label>
+                    <input type="text" id="new-note-title" required placeholder="e.g. Quadratic Formula" class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500">
+                </div>
+                 <div>
+                    <label class="block text-xs font-medium text-gray-400 uppercase mb-1">Content <span class="text-gray-500 normal-case">(use |hidden| or **bold**)</span></label>
+                    <textarea id="new-note-content" required rows="6" placeholder="Enter note content here." class="w-full bg-gray-800 border border-gray-700 rounded-md p-2.5 text-gray-200 focus:outline-none focus:border-emerald-500 resize-none"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 mt-2">
+                    <button type="button" onclick="closeNoteModal()" class="px-4 py-2 rounded-md text-gray-400 hover:bg-gray-800 text-sm">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-md bg-emerald-600 hover:bg-emerald-500 text-white font-medium shadow-lg text-sm">Save Note</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+     <div id="view-note-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden px-4">
+        <div class="bg-gray-900 rounded-xl border border-gray-800 shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <div id="view-note-header" class="p-4 border-b border-gray-800 flex justify-between items-start rounded-t-xl bg-gray-800/50">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                         <i data-lucide="sticky-note" class="w-4 h-4 text-gray-400" id="view-note-icon"></i>
+                         <span id="view-note-subject" class="text-xs font-bold uppercase tracking-wider text-gray-400">General</span>
+                    </div>
+                   
+                    <h2 id="view-note-title" class="text-xl font-bold text-gray-100 leading-tight">Note Title</h2>
+                    <p id="view-note-date" class="text-xs text-gray-500 mt-1">Created on...</p>
+                </div>
+                <button onclick="closeViewNoteModal()" class="text-gray-400 hover:text-gray-200 p-1 bg-gray-800 rounded-full hover:bg-gray-700 transition">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-grow bg-gray-950">
+                <div id="view-note-content" class="text-gray-300 leading-relaxed whitespace-pre-wrap font-mono text-sm">
+                    </div>
+            </div>
+             <div class="p-3 border-t border-gray-800 bg-gray-900 flex justify-between items-center rounded-b-xl">
+                 <button onclick="openNoteModal(currentViewNoteId)" class="flex items-center gap-2 px-3 py-1.5 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-400/10 rounded-md transition-colors text-sm font-medium">
+                    <i data-lucide="edit" class="w-4 h-4"></i> Edit Note
+                </button>
+                 <button id="btn-delete-note" class="flex items-center gap-2 px-3 py-1.5 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-md transition-colors text-sm font-medium">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> Delete Note
+                </button>
+             </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- VARIABLES ---
+        let topics = [];
+        let entries = [];
+        let exams = [];
+        let notes = [];
+        let fileHandle = null;
+        let historyStack = [];
+        
+        let topicChartInstance = null;
+        let timeChartInstance = null;
+        let currentDropdownId = null;
+        
+        let editingNoteId = null;
+        let currentViewNoteId = null;
+        
+        let currentNoteFilter = 'All'; // Track filter state
+
+        // --- DB ---
+        const DB_NAME = 'ProductivityHubDB';
+        const STORE_NAME = 'handles';
+        const dbPromise = new Promise((resolve, reject) => {
+            const request = indexedDB.open(DB_NAME, 1);
+            request.onupgradeneeded = (e) => { e.target.result.createObjectStore(STORE_NAME); };
+            request.onsuccess = (e) => resolve(e.target.result);
+            request.onerror = (e) => reject(e);
+        });
+        async function getStoredHandle() {
+            const db = await dbPromise;
+            return new Promise((resolve) => {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const req = tx.objectStore(STORE_NAME).get('mainFile');
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => resolve(null);
+            });
+        }
+        async function storeHandle(handle) {
+            const db = await dbPromise;
+            const tx = db.transaction(STORE_NAME, 'readwrite');
+            tx.objectStore(STORE_NAME).put(handle, 'mainFile');
+        }
+        async function clearHandle() {
+            const db = await dbPromise;
+            const tx = db.transaction(STORE_NAME, 'readwrite');
+            tx.objectStore(STORE_NAME).delete('mainFile');
+        }
+
+        // --- FILE SYSTEM ---
+        async function init() {
+            const existingHandle = await getStoredHandle();
+            if (existingHandle) {
+                fileHandle = existingHandle;
+                document.getElementById('overlay-initial').classList.add('hidden');
+                document.getElementById('overlay-reconnect').classList.remove('hidden');
+            } else {
+                document.getElementById('overlay-initial').classList.remove('hidden');
+                document.getElementById('overlay-reconnect').classList.add('hidden');
+            }
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        async function openFileNew() {
+            try {
+                [fileHandle] = await window.showOpenFilePicker({ types: [{ description: 'JSON Files', accept: { 'application/json': ['.json'] } }] });
+                await processFileLoad();
+                await storeHandle(fileHandle);
+            } catch (err) { console.error(err); }
+        }
+
+        async function verifyAndLoad() {
+            if (!fileHandle) return;
+            const opts = { mode: 'readwrite' };
+            if ((await fileHandle.queryPermission(opts)) !== 'granted') {
+                if ((await fileHandle.requestPermission(opts)) !== 'granted') { alert('Permission denied.'); return; }
+            }
+            await processFileLoad();
+        }
+
+        async function forgetFile() { await clearHandle(); fileHandle = null; document.getElementById('overlay-reconnect').classList.add('hidden'); document.getElementById('overlay-initial').classList.remove('hidden'); }
+
+        async function processFileLoad() {
+            try {
+                const file = await fileHandle.getFile();
+                const contents = await file.text();
+                const data = JSON.parse(contents);
+
+                topics = data.topics || [];
+                entries = data.entries || [];
+                exams = data.exams || [];
+                
+                // --- DATA MIGRATION LOGIC ---
+                // Convert any old notes with "General", "Biology", etc. to "Question" by default
+                // Only keep "Note" if explicitly set.
+                let rawNotes = data.notes || [];
+                const validTypes = ["Note", "Question"];
+                
+                notes = rawNotes.map(n => {
+                    if (!validTypes.includes(n.subject)) {
+                        n.subject = "Question"; // Default old notes to Questions
+                    }
+                    return n;
+                });
+                
+                historyStack = [];
+                updateUndoButton();
+
+                document.getElementById('data-overlay').classList.add('hidden');
+                const btnSave = document.getElementById('btn-save');
+                btnSave.disabled = false;
+                btnSave.classList.remove('bg-gray-600', 'text-gray-400', 'cursor-not-allowed');
+                btnSave.classList.add('bg-emerald-600', 'hover:bg-emerald-500', 'text-white', 'ring-emerald-400/50');
+                
+                switchMainTab('topics');
+                switchTopicSubTab('topics');
+                renderTimeApp();
+                renderExamApp();
+                renderNotesApp();
+
+            } catch(err) { console.error(err); alert("Error reading file."); }
+        }
+
+        async function saveFile() {
+            if (!fileHandle) return;
+            try {
+                const btnSave = document.getElementById('btn-save');
+                const originalContent = btnSave.innerHTML;
+                btnSave.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4 animate-spin"></i> Saving...`;
+                if(typeof lucide !== 'undefined') lucide.createIcons();
+
+                const writable = await fileHandle.createWritable();
+                const data = { topics, entries, exams, notes }; 
+                await writable.write(JSON.stringify(data, null, 4));
+                await writable.close();
+
+                btnSave.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Saved!`;
+                if(typeof lucide !== 'undefined') lucide.createIcons();
+                setTimeout(() => { btnSave.innerHTML = originalContent; if(typeof lucide !== 'undefined') lucide.createIcons(); }, 1500);
+            } catch (err) { console.error(err); alert("Failed to save."); }
+        }
+
+        // --- UNDO ---
+        function saveStateToHistory() {
+            const state = JSON.stringify({ topics, entries, exams, notes }); 
+            historyStack.push(state);
+            if (historyStack.length > 50) historyStack.shift();
+            updateUndoButton();
+        }
+        function undoLastAction() {
+            if (historyStack.length === 0) return;
+            const prevState = JSON.parse(historyStack.pop());
+            topics = prevState.topics;
+            entries = prevState.entries;
+            exams = prevState.exams || [];
+            notes = prevState.notes || []; 
+            
+            renderTopicApp();
+            renderTimeApp();
+            renderExamApp();
+            renderNotesApp(); 
+            saveFile();
+            updateUndoButton();
+        }
+        function updateUndoButton() {
+            const btn = document.getElementById('btn-undo');
+            if (historyStack.length > 0) { btn.disabled = false; btn.classList.remove('opacity-50', 'cursor-not-allowed'); btn.classList.add('hover:bg-gray-600', 'text-white'); btn.classList.remove('text-gray-400'); } 
+            else { btn.disabled = true; btn.classList.add('opacity-50', 'cursor-not-allowed'); btn.classList.remove('hover:bg-gray-600', 'text-white'); btn.classList.add('text-gray-400'); }
+        }
+
+        // --- TABS ---
+        function switchMainTab(tab) {
+            const appTopics = document.getElementById('app-topics');
+            const appExams = document.getElementById('app-exams');
+            const appNotes = document.getElementById('app-notes');
+            const appTime = document.getElementById('app-time');
+            
+            const btnTopics = document.getElementById('nav-btn-topics');
+            const btnExams = document.getElementById('nav-btn-exams');
+            const btnNotes = document.getElementById('nav-btn-notes');
+            const btnTime = document.getElementById('nav-btn-time');
+
+            [appTopics, appExams, appNotes, appTime].forEach(el => el.classList.add('hidden'));
+            [btnTopics, btnExams, btnNotes, btnTime].forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+                btn.classList.add('text-gray-400', 'hover:text-gray-200');
+            });
+
+            if (tab === 'topics') {
+                appTopics.classList.remove('hidden');
+                btnTopics.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+                btnTopics.classList.remove('text-gray-400');
+                renderTopicApp();
+            } else if (tab === 'exams') {
+                appExams.classList.remove('hidden');
+                btnExams.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+                btnExams.classList.remove('text-gray-400');
+                renderExamApp();
+            } else if (tab === 'notes') { 
+                appNotes.classList.remove('hidden');
+                btnNotes.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+                btnNotes.classList.remove('text-gray-400');
+                renderNotesApp();
+            } else {
+                appTime.classList.remove('hidden');
+                btnTime.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+                btnTime.classList.remove('text-gray-400');
+                renderTimeApp();
+            }
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function switchTopicSubTab(tabName) {
+            const topicsView = document.getElementById('view-topics');
+            const analyticsView = document.getElementById('view-analytics');
+            const tabTopics = document.getElementById('tab-topics-sub');
+            const tabAnalytics = document.getElementById('tab-analytics-sub');
+
+            if (tabName === 'topics') {
+                topicsView.classList.remove('hidden');
+                analyticsView.classList.add('hidden');
+                tabTopics.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+                tabTopics.classList.remove('text-gray-400');
+                tabAnalytics.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+                tabAnalytics.classList.add('text-gray-400');
+            } else {
+                topicsView.classList.add('hidden');
+                analyticsView.classList.remove('hidden');
+                tabAnalytics.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+                tabAnalytics.classList.remove('text-gray-400');
+                tabTopics.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+                tabTopics.classList.add('text-gray-400');
+                renderTopicApp();
+            }
+        }
+
+        // --- 1. TOPIC LOGIC ---
+        function getStatusColor(status) { switch(status) { case 'Complete': return 'bg-notion-green text-gray-900'; case 'In Progress': return 'bg-notion-yellow text-gray-900'; default: return 'bg-notion-red text-gray-900'; } }
+        function getStatusLabel(status) { return status === 'To Do' ? 'Not Started' : status; }
+        function openAddModal() { document.getElementById('add-modal').classList.remove('hidden'); document.getElementById('new-topic-title').focus(); }
+        function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); document.getElementById('new-topic-title').value = ''; }
+        
+        function saveNewTopic(e) {
+            e.preventDefault();
+            const subject = document.getElementById('new-topic-subject').value;
+            const title = document.getElementById('new-topic-title').value;
+            if(!title) return;
+            saveStateToHistory();
+            const newId = topics.length > 0 ? Math.max(...topics.map(t => t.id)) + 1 : 1;
+            topics.push({ id: newId, subject, title, status: 'To Do' });
+            renderTopicApp(); closeAddModal(); saveFile();
+        }
+        function updateTopicTitle(id, newTitle) { const topic = topics.find(t => t.id === id); if(topic && newTitle.trim() !== "" && topic.title !== newTitle.trim()) { saveStateToHistory(); topic.title = newTitle.trim(); saveFile(); } }
+        function showDropdown(event, id) { event.stopPropagation(); currentDropdownId = id; const d = document.getElementById('dropdown-menu'); const r = event.currentTarget.getBoundingClientRect(); d.style.top = `${r.bottom + window.scrollY + 5}px`; d.style.left = `${r.left + window.scrollX}px`; d.classList.remove('hidden'); document.addEventListener('click', hideDropdown); }
+        function hideDropdown() { document.getElementById('dropdown-menu').classList.add('hidden'); document.removeEventListener('click', hideDropdown); currentDropdownId = null; }
+        function setStatusFromDropdown(status) { if(currentDropdownId !== null) { const t = topics.find(t => t.id === currentDropdownId); if(t && t.status !== status) { saveStateToHistory(); t.status = status; renderTopicApp(); saveFile(); } } hideDropdown(); }
+        function handleDragStart(e, id) { e.dataTransfer.setData("text/plain", id); e.dataTransfer.effectAllowed = "move"; e.target.classList.add('dragging'); }
+        function handleDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; e.currentTarget.classList.add('drag-over'); }
+        function handleDrop(e, newStatus) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); const id = parseInt(e.dataTransfer.getData("text/plain")); const t = topics.find(t => t.id === id); if (t && t.status !== newStatus) { saveStateToHistory(); t.status = newStatus; renderTopicApp(); saveFile(); } document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging')); }
+
+        function createGridCard(topic) {
+            const c = { 'Biology': 'border-notion-bio/30 hover:border-notion-bio/60', 'Chemistry': 'border-notion-chem/30 hover:border-notion-chem/60', 'Mathematics': 'border-notion-math/30 hover:border-notion-math/60', 'Physics': 'border-notion-phy/30 hover:border-notion-phy/60' }[topic.subject] || 'border-gray-700';
+            return `<div class="card-hover bg-gray-800/50 border ${c} rounded-lg p-3 transition-all duration-200 group relative">
+                <div class="flex items-start gap-2 mb-2"><i data-lucide="file-text" class="w-4 h-4 mt-1 text-gray-400 flex-shrink-0"></i><div contenteditable="true" onblur="updateTopicTitle(${topic.id}, this.innerText)" class="text-sm font-medium text-gray-200 leading-tight flex-grow cursor-text outline-none rounded px-1 -ml-1 hover:bg-gray-700/50 transition-colors">${topic.title}</div></div>
+                <button onclick="showDropdown(event, ${topic.id})" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${getStatusColor(topic.status)} hover:opacity-80 transition-opacity">${getStatusLabel(topic.status)} <i data-lucide="chevron-down" class="w-3 h-3 ml-1"></i></button></div>`;
+        }
+        function createKanbanCard(topic) { return `<div draggable="true" ondragstart="handleDragStart(event, ${topic.id})" class="cursor-grab active:cursor-grabbing bg-gray-800 border border-gray-700 rounded-lg p-3 shadow-sm hover:border-indigo-500/50 hover:bg-gray-750 transition-all"><span class="text-[10px] uppercase tracking-wider opacity-60 mb-1 block">${topic.subject}</span><div class="flex items-start gap-2"><span class="text-sm font-medium text-gray-200 leading-tight">${topic.title}</span></div></div>`; }
+
+        function renderTopicApp() {
+            const subs = { 'Biology': [], 'Chemistry': [], 'Mathematics': [], 'Physics': [] };
+            topics.forEach(t => { if(subs[t.subject]) subs[t.subject].push(t); });
+            Object.keys(subs).forEach(s => {
+                const short = s.substring(0,3); 
+                const countEl = document.getElementById(`count-${s === 'Physics' ? 'Phy' : s === 'Biology' ? 'Bio' : s === 'Chemistry' ? 'Chem' : 'Math'}`);
+                const colEl = document.getElementById(`col-${s === 'Physics' ? 'Phy' : s === 'Biology' ? 'Bio' : s === 'Chemistry' ? 'Chem' : 'Math'}`);
+                if(countEl) countEl.innerText = subs[s].length;
+                if(colEl) colEl.innerHTML = subs[s].map(t => createGridCard(t)).join('');
+            });
+
+            const todo = topics.filter(t => t.status === 'To Do');
+            const prog = topics.filter(t => t.status === 'In Progress');
+            const comp = topics.filter(t => t.status === 'Complete');
+            const total = topics.length;
+
+            document.getElementById('count-kanban-todo').innerText = todo.length;
+            document.getElementById('count-kanban-prog').innerText = prog.length;
+            document.getElementById('count-kanban-comp').innerText = comp.length;
+            document.getElementById('kanban-todo').innerHTML = todo.map(t => createKanbanCard(t)).join('');
+            document.getElementById('kanban-prog').innerHTML = prog.map(t => createKanbanCard(t)).join('');
+            document.getElementById('kanban-comp').innerHTML = comp.map(t => createKanbanCard(t)).join('');
+
+            document.getElementById('stat-todo').innerHTML = `${todo.length} <span class="text-lg font-normal opacity-70">(${total > 0 ? ((todo.length/total)*100).toFixed(1) : 0}%)</span>`;
+            document.getElementById('stat-prog').innerHTML = `${prog.length} <span class="text-lg font-normal opacity-70">(${total > 0 ? ((prog.length/total)*100).toFixed(1) : 0}%)</span>`;
+            document.getElementById('stat-comp').innerHTML = `${comp.length} <span class="text-lg font-normal opacity-70">(${total > 0 ? ((comp.length/total)*100).toFixed(1) : 0}%)</span>`;
+
+            const subNames = ['Biology', 'Chemistry', 'Mathematics', 'Physics'];
+            document.getElementById('subject-summary').innerHTML = subNames.map(sub => {
+                const subTotal = topics.filter(t => t.subject === sub).length;
+                const subDone = topics.filter(t => t.subject === sub && t.status === 'Complete').length;
+                const c = sub === 'Biology' ? 'text-notion-bio' : sub === 'Chemistry' ? 'text-notion-chem' : sub === 'Mathematics' ? 'text-notion-math' : 'text-notion-phy';
+                return `<li class="flex justify-between items-center"><span class="${c} font-medium">${sub}</span><span>${subDone}/${subTotal} <span class="text-gray-500 text-xs">(${subTotal ? Math.round((subDone/subTotal)*100) : 0}%)</span></span></li>`;
+            }).join('');
+
+            updateTopicChart(todo.length, prog.length, comp.length);
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function updateTopicChart(todo, prog, comp) {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            if (topicChartInstance) { 
+                topicChartInstance.data.datasets[0].data = [todo, comp, prog]; 
+                topicChartInstance.update(); 
+            } 
+            else {
+                topicChartInstance = new Chart(ctx, { 
+                    type: 'doughnut', 
+                    plugins: [ChartDataLabels], 
+                    data: { 
+                        labels: ['To-do', 'Complete', 'In progress'], 
+                        datasets: [{ 
+                            data: [todo, comp, prog], 
+                            backgroundColor: ['#e5e7eb', '#1dd1a1', '#feca57'], 
+                            borderWidth: 0, 
+                            hoverOffset: 4 
+                        }] 
+                    }, 
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { position: 'bottom', labels: { color: '#9ca3af', usePointStyle: true, padding: 20 } }, 
+                            datalabels: { 
+                                color: '#1f2937', 
+                                font: { weight: 'bold', size: 12 }, 
+                                textAlign: 'center',
+                                formatter: (value, ctx) => { 
+                                    let sum = 0; 
+                                    ctx.chart.data.datasets[0].data.map(d => sum+=d); 
+                                    let percentage = (value * 100 / sum).toFixed(1) + "%";
+                                    if (value === 0) return ""; 
+                                    return value + "\n(" + percentage + ")"; 
+                                } 
+                            } 
+                        }, 
+                        cutout: '70%' 
+                    },
+                    plugins: [{
+                        id: 'textCenter',
+                        beforeDraw: function(chart) {
+                            var width = chart.width, height = chart.height, ctx = chart.ctx;
+                            ctx.restore();
+                            var fontSize = (height / 114).toFixed(2);
+                            ctx.font = "bold " + fontSize + "em sans-serif";
+                            ctx.textBaseline = "middle";
+                            ctx.fillStyle = "#ffffff";
+                            var sum = chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                            var text = sum, textX = Math.round((width - ctx.measureText(text).width) / 2), textY = height / 2.2;
+                            ctx.fillText(text, textX, textY);
+                            var fontSize2 = (height / 300).toFixed(2);
+                            ctx.font = fontSize2 + "em sans-serif";
+                            ctx.fillStyle = "#9ca3af";
+                            var text2 = "Total", textX2 = Math.round((width - ctx.measureText(text2).width) / 2), textY2 = height / 1.8;
+                            ctx.fillText(text2, textX2, textY2);
+                            ctx.save();
+                        }
+                    }]
+                });
+            }
+        }
+
+        // --- 2. EXAM TRACKER LOGIC ---
+        function openExamModal() { document.getElementById('add-exam-modal').classList.remove('hidden'); }
+        function closeExamModal() { document.getElementById('add-exam-modal').classList.add('hidden'); document.getElementById('new-exam-name').value=''; document.getElementById('new-exam-date').value=''; }
+        
+        function saveNewExam(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-exam-name').value;
+            const date = document.getElementById('new-exam-date').value;
+            if(!name || !date) return;
+            saveStateToHistory();
+            const newId = exams.length > 0 ? Math.max(...exams.map(ex => ex.id)) + 1 : 1;
+            const today = new Date().toISOString().split('T')[0];
+            exams.push({ id: newId, name, date, createdDate: today, topics: [] });
+            renderExamApp(); closeExamModal(); saveFile();
+        }
+        function deleteExam(id) { if(confirm("Delete this exam?")) { saveStateToHistory(); exams = exams.filter(e => e.id !== id); renderExamApp(); saveFile(); } }
+        
+        function addExamTopic(examId, inputEl) {
+            const val = inputEl.value.trim();
+            if(!val) return;
+            const exam = exams.find(e => e.id === examId);
+            if(exam) {
+                saveStateToHistory();
+                const newTid = exam.topics.length > 0 ? Math.max(...exam.topics.map(t => t.id)) + 1 : 1;
+                exam.topics.push({ id: newTid, name: val, done: false });
+                inputEl.value = ''; renderExamApp(); saveFile();
+            }
+        }
+        function toggleExamTopic(examId, topicId) {
+            const exam = exams.find(e => e.id === examId);
+            if(exam) {
+                const t = exam.topics.find(tp => tp.id === topicId);
+                if(t) { saveStateToHistory(); t.done = !t.done; renderExamApp(); saveFile(); }
+            }
+        }
+        function deleteExamTopic(examId, topicId) {
+            const exam = exams.find(e => e.id === examId);
+            if(exam) {
+                saveStateToHistory();
+                exam.topics = exam.topics.filter(t => t.id !== topicId);
+                renderExamApp(); saveFile();
+            }
+        }
+
+        function renderExamApp() {
+            const container = document.getElementById('exams-container');
+            const empty = document.getElementById('exams-empty');
+            container.innerHTML = '';
+            if(exams.length === 0) { empty.classList.remove('hidden'); return; }
+            empty.classList.add('hidden');
+
+            exams.forEach(exam => {
+                const start = new Date(exam.createdDate || exam.date); 
+                const due = new Date(exam.date);
+                const now = new Date();
+                start.setHours(0,0,0,0); due.setHours(0,0,0,0); now.setHours(0,0,0,0);
+
+                const totalDays = (due - start) / (1000*60*60*24);
+                const daysPassed = (now - start) / (1000*60*60*24);
+                const daysLeft = Math.ceil((due - now) / (1000*60*60*24));
+                
+                let timePct = 0;
+                if(totalDays > 0) timePct = (daysPassed / totalDays) * 100;
+                if(timePct < 0) timePct = 0; if(timePct > 100) timePct = 100;
+                
+                const totalTopics = exam.topics.length;
+                const doneTopics = exam.topics.filter(t => t.done).length;
+                const taskPct = totalTopics > 0 ? (doneTopics / totalTopics) * 100 : 0;
+
+                const daysLeftText = daysLeft < 0 ? "Exam Passed" : daysLeft === 0 ? "Today!" : `${daysLeft} days left`;
+                const daysColor = daysLeft <= 3 && daysLeft >= 0 ? "text-red-400" : "text-gray-400";
+
+                const topicsHtml = exam.topics.map(t => `
+                    <div class="flex items-center gap-2 group/item">
+                        <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleExamTopic(${exam.id}, ${t.id})" class="rounded bg-gray-700 border-gray-600 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
+                        <span class="text-sm ${t.done ? 'line-through text-gray-500' : 'text-gray-300'} flex-grow truncate">${t.name}</span>
+                        <button onclick="deleteExamTopic(${exam.id}, ${t.id})" class="opacity-0 group-hover/item:opacity-100 text-gray-600 hover:text-red-400"><i data-lucide="x" class="w-3 h-3"></i></button>
+                    </div>
+                `).join('');
+
+                const card = document.createElement('div');
+                card.className = 'bg-gray-900 border border-gray-800 rounded-xl p-5 shadow-lg flex flex-col gap-4';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-100">${exam.name}</h3>
+                            <div class="text-xs ${daysColor} font-mono mt-1 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ${daysLeftText} (${exam.date})</div>
+                        </div>
+                        <button onclick="deleteExam(${exam.id})" class="text-gray-600 hover:text-red-400 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                    <div><div class="flex justify-between text-[10px] text-gray-500 uppercase tracking-wider mb-1"><span>Time Elapsed</span><span>${Math.round(timePct)}%</span></div><div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden"><div class="bg-indigo-500 h-1.5 rounded-full transition-all duration-500" style="width: ${timePct}%"></div></div></div>
+                    <div><div class="flex justify-between text-[10px] text-gray-500 uppercase tracking-wider mb-1"><span>Progress (${doneTopics}/${totalTopics})</span><span>${Math.round(taskPct)}%</span></div><div class="w-full bg-gray-800 rounded-full h-1.5 overflow-hidden"><div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: ${taskPct}%"></div></div></div>
+                    <div class="flex-grow bg-gray-800/30 rounded-lg p-3 space-y-2 max-h-40 overflow-y-auto custom-scrollbar">${topicsHtml.length ? topicsHtml : '<div class="text-xs text-gray-600 text-center italic">No topics added</div>'}</div>
+                    <div class="flex gap-2 mt-auto"><input type="text" placeholder="Add topic..." onkeydown="if(event.key==='Enter') addExamTopic(${exam.id}, this)" class="bg-gray-800 border border-gray-700 text-xs rounded px-2 py-1.5 flex-grow text-white focus:border-indigo-500 outline-none"><button onclick="addExamTopic(${exam.id}, this.previousElementSibling)" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 rounded px-2"><i data-lucide="plus" class="w-3 h-3"></i></button></div>
+                `;
+                container.appendChild(card);
+            });
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+
+        // --- 3. NOTES LOGIC (UPDATED) ---
+        
+        function openNoteModal(editId = null) {
+            document.getElementById('add-note-modal').classList.remove('hidden');
+            const titleInput = document.getElementById('new-note-title');
+            const contentInput = document.getElementById('new-note-content');
+            const subjectInput = document.getElementById('new-note-subject');
+            const modalTitle = document.getElementById('note-modal-title');
+            
+            if (editId) {
+                const note = notes.find(n => n.id === editId);
+                if (note) {
+                    editingNoteId = editId;
+                    titleInput.value = note.title;
+                    contentInput.value = note.content;
+                    subjectInput.value = note.subject;
+                    modalTitle.innerHTML = `<i data-lucide="edit" class="text-emerald-500"></i> Edit Note`;
+                    closeViewNoteModal();
+                }
+            } else {
+                editingNoteId = null;
+                titleInput.value = '';
+                contentInput.value = '';
+                subjectInput.value = 'Question'; // Default
+                modalTitle.innerHTML = `<i data-lucide="sticky-note" class="text-emerald-500"></i> New Note`;
+            }
+            titleInput.focus();
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        function closeNoteModal() { document.getElementById('add-note-modal').classList.add('hidden'); editingNoteId = null; }
+        function closeViewNoteModal() { document.getElementById('view-note-modal').classList.add('hidden'); currentViewNoteId = null; }
+
+        // UPDATED: Handles **bold** and |spoiler|
+        function formatContent(text) {
+            // 1. Bold (**text**)
+            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // 2. Spoilers (|text|)
+            formatted = formatted.replace(/\|(.*?)\|/g, '<span class="spoiler" onclick="toggleSpoiler(this)">$1</span>');
+            return formatted;
+        }
+
+        window.toggleSpoiler = function(element) { element.classList.toggle('revealed'); }
+
+        function saveNewNote(e) {
+            e.preventDefault();
+            const title = document.getElementById('new-note-title').value.trim();
+            const content = document.getElementById('new-note-content').value; 
+            const subject = document.getElementById('new-note-subject').value || 'Question';
+            
+            if (!title || !content) return;
+            saveStateToHistory();
+            
+            if (editingNoteId) {
+                const note = notes.find(n => n.id === editingNoteId);
+                if (note) {
+                    note.title = title;
+                    note.content = content;
+                    note.subject = subject;
+                }
+            } else {
+                const newId = Date.now();
+                const today = new Date().toISOString().split('T')[0];
+                // CHANGED: Use unshift instead of push so new notes appear at TOP by default
+                notes.unshift({ id: newId, title, content, subject, createdDate: today });
+            }
+            renderNotesApp();
+            closeNoteModal();
+            saveFile();
+        }
+
+        function deleteNote(id) {
+            if (confirm("Delete this note permanently?")) {
+                saveStateToHistory();
+                notes = notes.filter(n => n.id !== id);
+                renderNotesApp();
+                closeViewNoteModal();
+                saveFile();
+            }
+        }
+
+        function switchNoteTab(tab) {
+            currentNoteFilter = tab;
+            
+            // Update Buttons styling
+            const btnAll = document.getElementById('note-tab-All');
+            const btnNote = document.getElementById('note-tab-Note');
+            const btnQuest = document.getElementById('note-tab-Question');
+            
+            [btnAll, btnNote, btnQuest].forEach(b => {
+                b.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
+                b.classList.add('text-gray-400', 'hover:text-gray-200');
+            });
+
+            const activeBtn = document.getElementById(`note-tab-${tab}`);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
+                activeBtn.classList.remove('text-gray-400');
+            }
+
+            renderNotesApp();
+        }
+
+        function moveNote(id, direction) {
+            // 1. Find the note in the MAIN 'notes' array
+            const realIndex = notes.findIndex(n => n.id === id);
+            if (realIndex === -1) return;
+
+            // 2. Find the VISIBLE list based on current filter
+            let visibleNotes = notes;
+            if (currentNoteFilter !== 'All') {
+                visibleNotes = notes.filter(n => n.subject === currentNoteFilter);
+            }
+
+            // 3. Find where the current note is in the VISIBLE list
+            const visibleIndex = visibleNotes.findIndex(n => n.id === id);
+            if (visibleIndex === -1) return;
+
+            // 4. Determine the swap target in the VISIBLE list
+            let targetVisibleIndex;
+            if (direction === 'up') {
+                targetVisibleIndex = visibleIndex - 1;
+            } else {
+                targetVisibleIndex = visibleIndex + 1;
+            }
+
+            // Boundary checks
+            if (targetVisibleIndex < 0 || targetVisibleIndex >= visibleNotes.length) return;
+
+            // 5. Get the actual object of the target note
+            const targetNote = visibleNotes[targetVisibleIndex];
+            
+            // 6. Find the target's index in the MAIN array
+            const targetRealIndex = notes.findIndex(n => n.id === targetNote.id);
+
+            // 7. Swap in the MAIN array
+            saveStateToHistory();
+            
+            // Remove the note from its old position
+            const [movedNote] = notes.splice(realIndex, 1);
+            
+            // If we are moving 'down' effectively (to a higher index), we might need to adjust logic slightly
+            // But since we removed it first, the indices shift.
+            // However, finding the *fresh* index of the target is safer.
+            const newTargetIndex = notes.findIndex(n => n.id === targetNote.id);
+            
+            // Insert it relative to the target
+            // If direction was 'up' (visually), we want to be BEFORE the target (index)
+            // If direction was 'down' (visually), we want to be AFTER the target (index + 1)
+            
+            // WAIT: We want to swap positions. If I am moving UP visually, I want to take the Target's slot, and push Target down.
+            // If I am moving DOWN visually, I want to take the slot AFTER Target.
+            
+            if (direction === 'up') {
+                notes.splice(newTargetIndex, 0, movedNote);
+            } else {
+                notes.splice(newTargetIndex + 1, 0, movedNote);
+            }
+
+            renderNotesApp();
+            saveFile();
+        }
+
+        function viewNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+            currentViewNoteId = id; 
+
+            const header = document.getElementById('view-note-header');
+            const subjectEl = document.getElementById('view-note-subject');
+            const iconEl = document.getElementById('view-note-icon');
+            const titleEl = document.getElementById('view-note-title');
+            const dateEl = document.getElementById('view-note-date');
+            const contentEl = document.getElementById('view-note-content');
+            const deleteBtn = document.getElementById('btn-delete-note');
+
+            // Simple color logic for Question vs Note
+            let colorClass = 'text-gray-400';
+            let bgClass = 'bg-gray-800/50';
+            
+            if (note.subject === 'Question') { 
+                colorClass = 'text-notion-yellow'; // Amber for Question
+                bgClass = 'bg-notion-yellow/10 border-notion-yellow/20'; 
+            } else if (note.subject === 'Note') { 
+                colorClass = 'text-notion-green'; // Emerald for Note
+                bgClass = 'bg-notion-green/10 border-notion-green/20'; 
+            }
+
+            header.className = `p-4 border-b flex justify-between items-start rounded-t-xl transition-colors ${bgClass}`;
+            subjectEl.className = `text-xs font-bold uppercase tracking-wider ${colorClass}`;
+            iconEl.className = `w-4 h-4 ${colorClass}`;
+            
+            subjectEl.innerText = note.subject;
+            titleEl.innerText = note.title;
+            dateEl.innerText = `Created on ${note.createdDate}`;
+            contentEl.innerHTML = formatContent(note.content);
+            deleteBtn.onclick = () => deleteNote(note.id);
+
+            document.getElementById('view-note-modal').classList.remove('hidden');
+             if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+
+        function renderNotesApp() {
+            const container = document.getElementById('notes-container');
+            const empty = document.getElementById('notes-empty');
+            container.innerHTML = '';
+
+            // Filter Logic
+            let filteredNotes = notes;
+            if (currentNoteFilter !== 'All') {
+                filteredNotes = notes.filter(n => n.subject === currentNoteFilter);
+            }
+
+            if (filteredNotes.length === 0) { empty.classList.remove('hidden'); return; }
+            empty.classList.add('hidden');
+
+            // CHANGED: Removed sorting by ID so manual order persists
+            // const sortedNotes = [...filteredNotes].sort((a, b) => b.id - a.id);
+            const sortedNotes = filteredNotes; // Use array order directly
+
+            sortedNotes.forEach(note => {
+                let colorClass = 'text-gray-400';
+                let borderClass = 'border-gray-800 hover:border-gray-700';
+                let bgClass = 'bg-gray-800/30';
+                
+                if (note.subject === 'Question') {
+                    colorClass = 'text-notion-yellow';
+                    borderClass = 'border-notion-yellow/20 hover:border-notion-yellow/40';
+                    bgClass = 'bg-notion-yellow/5';
+                } else if (note.subject === 'Note') {
+                    colorClass = 'text-notion-green';
+                    borderClass = 'border-notion-green/20 hover:border-notion-green/40';
+                    bgClass = 'bg-notion-green/5';
+                }
+
+                const previewText = note.content.length > 120 ? note.content.substring(0, 120) + "..." : note.content;
+                // We format the preview so bold text shows up even in the card
+                const parsedPreview = formatContent(previewText);
+
+                const card = document.createElement('div');
+                card.className = `card-hover rounded-xl border ${borderClass} shadow-lg overflow-hidden flex flex-col transition-all cursor-pointer group bg-gray-900 relative`;
+                // Add onclick but ensure buttons don't trigger it
+                card.onclick = (e) => {
+                    if (!e.target.closest('button')) viewNote(note.id);
+                };
+                
+                card.innerHTML = `
+                    <div class="p-4 ${bgClass} border-b ${borderClass} flex justify-between items-start">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <i data-lucide="sticky-note" class="w-3 h-3 ${colorClass}"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-wider ${colorClass}">${note.subject}</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-gray-100 leading-tight group-hover:text-indigo-400 transition-colors pr-8">${note.title}</h3>
+                        </div>
+                        
+                        <!-- UPDATED: Move Buttons -->
+                        <div class="flex flex-col gap-1 absolute top-2 right-2 opacity-50 hover:opacity-100 transition-opacity">
+                            <button onclick="moveNote(${note.id}, 'up')" class="p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-white" title="Move Up">
+                                <i data-lucide="chevron-up" class="w-3 h-3"></i>
+                            </button>
+                            <button onclick="moveNote(${note.id}, 'down')" class="p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-white" title="Move Down">
+                                <i data-lucide="chevron-down" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 flex-grow">
+                        <p class="text-gray-400 text-sm font-mono leading-relaxed break-words line-clamp-4">${parsedPreview}</p>
+                    </div>
+                     <div class="px-4 py-3 bg-gray-900/50 border-t border-gray-800 flex justify-between items-center text-xs text-gray-500">
+                        <span>${note.createdDate}</span>
+                         <span class="text-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">View details <i data-lucide="arrow-right" class="w-3 h-3"></i></span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+             if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+
+        // --- 4. READING LOGIC ---
+        const getLocalYMD = (d) => { const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,'0'); const da = String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${da}`; };
+        document.getElementById('dateInput').value = getLocalYMD(new Date());
+
+        function addEntry(e) {
+            e.preventDefault();
+            const date = document.getElementById('dateInput').value;
+            const time = parseInt(document.getElementById('timeInput').value);
+            if (!date || isNaN(time) || time <= 0) return;
+            saveStateToHistory();
+            entries.push({ id: Date.now(), date, time });
+            entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+            document.getElementById('logForm').reset(); document.getElementById('dateInput').value = getLocalYMD(new Date());
+            renderTimeApp(); saveFile();
+        }
+        function updateEntryTime(id, newTime) { const t = parseInt(newTime); if (isNaN(t) || t <= 0) { renderTimeApp(); return; } const e = entries.find(e => e.id === id); if (e && e.time !== t) { saveStateToHistory(); e.time = t; renderTimeApp(); saveFile(); } }
+        function deleteEntry(id) { saveStateToHistory(); entries = entries.filter(e => e.id !== id); renderTimeApp(); saveFile(); }
+        function clearAllTimeData() { if(confirm("Delete all reading history?")) { saveStateToHistory(); entries = []; renderTimeApp(); saveFile(); } }
+
+        function renderTimeApp() {
+            const tbody = document.getElementById('dataTableBody');
+            const empty = document.getElementById('emptyState');
+            tbody.innerHTML = '';
+            if (entries.length === 0) empty.classList.remove('hidden'); 
+            else {
+                empty.classList.add('hidden');
+                entries.forEach(e => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-gray-800/50 transition group';
+                    tr.innerHTML = `<td class="p-3 text-gray-300 font-mono text-sm">${e.date}</td><td class="p-3 text-gray-300 font-medium"><div class="flex items-center"><input type="number" value="${e.time}" min="1" onchange="updateEntryTime(${e.id}, this.value)" class="bg-transparent border-b border-gray-700 hover:border-gray-500 focus:border-purple-500 text-white w-16 text-center focus:outline-none transition-colors py-1"><span class="text-gray-500 text-xs ml-2">min</span></div></td><td class="p-3 text-right"><button onclick="deleteEntry(${e.id})" class="text-gray-600 hover:text-red-400 transition p-1 rounded hover:bg-gray-700"><i data-lucide="trash-2" class="w-4 h-4"></i></button></td>`;
+                    tbody.appendChild(tr);
+                });
+            }
+            const ctx = document.getElementById('readingChart').getContext('2d');
+            const labels = [], keys = [], map = {}, bg = [], border = [];
+            for (let i = 13; i >= 0; i--) {
+                const d = new Date(); d.setDate(d.getDate() - i); const k = getLocalYMD(d);
+                labels.push(d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })); keys.push(k); map[k] = 0;
+                const h = Math.floor((13 - i) * (300 / 14)); bg.push(`hsla(${h}, 70%, 60%, 0.6)`); border.push(`hsla(${h}, 70%, 60%, 1)`);
+            }
+            let total = 0;
+            entries.forEach(e => { if (map.hasOwnProperty(e.date)) { map[e.date] += e.time; total += e.time; } });
+            document.getElementById('totalTimeDisplay').innerText = `${total}m`;
+            document.getElementById('avgTimeDisplay').innerText = `${Math.round(total/14)}m`;
+
+            if (timeChartInstance) timeChartInstance.destroy();
+            timeChartInstance = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Minutes', data: keys.map(k => map[k]), backgroundColor: bg, borderColor: border, borderWidth: 2, borderRadius: 6, barPercentage: 0.6, categoryPercentage: 0.8 }] }, plugins: [{ id: 'topLabels', afterDatasetsDraw(chart) { const { ctx } = chart; chart.data.datasets.forEach((ds, i) => { chart.getDatasetMeta(i).data.forEach((bar, index) => { const d = ds.data[index]; if (d > 0) { ctx.fillStyle = '#d1d5db'; ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(d, bar.x, bar.y - 5); } }); }); } }], options: { responsive: true, maintainAspectRatio: false, layout: { padding: { top: 20 } }, scales: { y: { beginAtZero: true, grid: { color: '#374151' }, ticks: { color: '#9ca3af' } }, x: { grid: { display: false }, ticks: { color: '#9ca3af', maxRotation: 45, minRotation: 0 } } }, plugins: { legend: { display: false } } } });
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        window.addEventListener('load', init);
+        switchMainTab('topics');
+        document.getElementById('logForm').addEventListener('submit', addEntry);
+    </script>
+</body>
+</html>

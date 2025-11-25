@@ -1,0 +1,790 @@
+{
+    "topics": [
+        {
+            "id": 1,
+            "subject": "Biology",
+            "title": "cyc g9 cell bio nu3/ou2",
+            "status": "Complete"
+        },
+        {
+            "id": 2,
+            "subject": "Biology",
+            "title": "cyc g9 human bio and health nu5/ou3",
+            "status": "To Do"
+        },
+        {
+            "id": 3,
+            "subject": "Biology",
+            "title": "cyc g9 classification nu2/ou5",
+            "status": "To Do"
+        },
+        {
+            "id": 4,
+            "subject": "Biology",
+            "title": "cyc g9 envt,ecology nu6/ou6",
+            "status": "To Do"
+        },
+        {
+            "id": 5,
+            "subject": "Biology",
+            "title": "g10 subfields of bio",
+            "status": "To Do"
+        },
+        {
+            "id": 6,
+            "subject": "Biology",
+            "title": "g11 bio & tech",
+            "status": "To Do"
+        },
+        {
+            "id": 7,
+            "subject": "Biology",
+            "title": "g12 application of bio",
+            "status": "In Progress"
+        },
+        {
+            "id": 8,
+            "subject": "Biology",
+            "title": "g10 plants",
+            "status": "To Do"
+        },
+        {
+            "id": 9,
+            "subject": "Biology",
+            "title": "g11 animals",
+            "status": "To Do"
+        },
+        {
+            "id": 10,
+            "subject": "Biology",
+            "title": "g10 human bio",
+            "status": "To Do"
+        },
+        {
+            "id": 11,
+            "subject": "Biology",
+            "title": "g11 human bdy sys",
+            "status": "To Do"
+        },
+        {
+            "id": 12,
+            "subject": "Biology",
+            "title": "g12 human bdy sys",
+            "status": "To Do"
+        },
+        {
+            "id": 13,
+            "subject": "Biology",
+            "title": "g12 microorgs",
+            "status": "To Do"
+        },
+        {
+            "id": 14,
+            "subject": "Biology",
+            "title": "g10 cell repo",
+            "status": "To Do"
+        },
+        {
+            "id": 15,
+            "subject": "Biology",
+            "title": "g11 genetics",
+            "status": "To Do"
+        },
+        {
+            "id": 16,
+            "subject": "Biology",
+            "title": "g10 ecological interaction",
+            "status": "To Do"
+        },
+        {
+            "id": 17,
+            "subject": "Biology",
+            "title": "g11 popln and natural resources",
+            "status": "To Do"
+        },
+        {
+            "id": 18,
+            "subject": "Biology",
+            "title": "g12 climate change",
+            "status": "To Do"
+        },
+        {
+            "id": 19,
+            "subject": "Biology",
+            "title": "g11 enzymes",
+            "status": "To Do"
+        },
+        {
+            "id": 20,
+            "subject": "Biology",
+            "title": "g12 energy transformation",
+            "status": "To Do"
+        },
+        {
+            "id": 21,
+            "subject": "Biology",
+            "title": "g12 evolution",
+            "status": "To Do"
+        },
+        {
+            "id": 22,
+            "subject": "Biology",
+            "title": "g10 bio molecules",
+            "status": "To Do"
+        },
+        {
+            "id": 23,
+            "subject": "Chemistry",
+            "title": "g9 structure of atoms and periodic table nu3,4/ou1,2",
+            "status": "To Do"
+        },
+        {
+            "id": 24,
+            "subject": "Chemistry",
+            "title": "g11 atomic struct and periodic",
+            "status": "Complete"
+        },
+        {
+            "id": 25,
+            "subject": "Chemistry",
+            "title": "g9 chem bonding nu5/ou3",
+            "status": "To Do"
+        },
+        {
+            "id": 26,
+            "subject": "Chemistry",
+            "title": "g11 chem bonding",
+            "status": "To Do"
+        },
+        {
+            "id": 27,
+            "subject": "Chemistry",
+            "title": "g10 chem rxn and stochimetry",
+            "status": "To Do"
+        },
+        {
+            "id": 28,
+            "subject": "Chemistry",
+            "title": "g11 chemical kinetics",
+            "status": "To Do"
+        },
+        {
+            "id": 29,
+            "subject": "Chemistry",
+            "title": "g11 physical states of matter",
+            "status": "To Do"
+        },
+        {
+            "id": 30,
+            "subject": "Chemistry",
+            "title": "g11 chem equilibrum",
+            "status": "To Do"
+        },
+        {
+            "id": 31,
+            "subject": "Chemistry",
+            "title": "g10 solutions",
+            "status": "To Do"
+        },
+        {
+            "id": 32,
+            "subject": "Chemistry",
+            "title": "g10 important inorganic cpds",
+            "status": "To Do"
+        },
+        {
+            "id": 33,
+            "subject": "Chemistry",
+            "title": "g12 acid base equilibria",
+            "status": "Complete"
+        },
+        {
+            "id": 34,
+            "subject": "Chemistry",
+            "title": "g10 hydrocarbons",
+            "status": "To Do"
+        },
+        {
+            "id": 35,
+            "subject": "Chemistry",
+            "title": "g11 o2 containing organic cpds",
+            "status": "To Do"
+        },
+        {
+            "id": 36,
+            "subject": "Chemistry",
+            "title": "g12 polymers",
+            "status": "To Do"
+        },
+        {
+            "id": 37,
+            "subject": "Chemistry",
+            "title": "g10 electrochem",
+            "status": "To Do"
+        },
+        {
+            "id": 38,
+            "subject": "Chemistry",
+            "title": "g12 electrochem",
+            "status": "To Do"
+        },
+        {
+            "id": 39,
+            "subject": "Chemistry",
+            "title": "g10 metals and nonmetals",
+            "status": "To Do"
+        },
+        {
+            "id": 40,
+            "subject": "Chemistry",
+            "title": "g12 industrial chem",
+            "status": "To Do"
+        },
+        {
+            "id": 41,
+            "subject": "Chemistry",
+            "title": "g12 envt chem",
+            "status": "To Do"
+        },
+        {
+            "id": 42,
+            "subject": "Mathematics",
+            "title": "cyc g9 the number sys nu2/ou1",
+            "status": "Complete"
+        },
+        {
+            "id": 43,
+            "subject": "Mathematics",
+            "title": "cyc g9 slvn equations nu3/ou2",
+            "status": "Complete"
+        },
+        {
+            "id": 44,
+            "subject": "Mathematics",
+            "title": "cyc g9 futher on sets nu1/ou3",
+            "status": "Complete"
+        },
+        {
+            "id": 45,
+            "subject": "Mathematics",
+            "title": "cyc g9 polygon, similarity, congurency nu6,7/ou5",
+            "status": "Complete"
+        },
+        {
+            "id": 46,
+            "subject": "Mathematics",
+            "title": "cyc g9 statis and prob nu9/ou6",
+            "status": "In Progress"
+        },
+        {
+            "id": 47,
+            "subject": "Mathematics",
+            "title": "cyc g9 vectors nu8/ou7",
+            "status": "Complete"
+        },
+        {
+            "id": 48,
+            "subject": "Mathematics",
+            "title": "g12 sequence",
+            "status": "Complete"
+        },
+        {
+            "id": 49,
+            "subject": "Mathematics",
+            "title": "g10 relation and fun",
+            "status": "To Do"
+        },
+        {
+            "id": 50,
+            "subject": "Mathematics",
+            "title": "g10 poly fun",
+            "status": "To Do"
+        },
+        {
+            "id": 51,
+            "subject": "Mathematics",
+            "title": "g10 exponent and log funs",
+            "status": "In Progress"
+        },
+        {
+            "id": 52,
+            "subject": "Mathematics",
+            "title": "g10 trigo funs",
+            "status": "To Do"
+        },
+        {
+            "id": 53,
+            "subject": "Mathematics",
+            "title": "g11 relation and funs",
+            "status": "To Do"
+        },
+        {
+            "id": 54,
+            "subject": "Mathematics",
+            "title": "g11 rational expessions and rational functions",
+            "status": "To Do"
+        },
+        {
+            "id": 55,
+            "subject": "Mathematics",
+            "title": "g11 transformation of the planes",
+            "status": "To Do"
+        },
+        {
+            "id": 56,
+            "subject": "Mathematics",
+            "title": "g12 calculus",
+            "status": "In Progress"
+        },
+        {
+            "id": 57,
+            "subject": "Mathematics",
+            "title": "g10 circles",
+            "status": "To Do"
+        },
+        {
+            "id": 58,
+            "subject": "Mathematics",
+            "title": "g10 solid figures",
+            "status": "To Do"
+        },
+        {
+            "id": 59,
+            "subject": "Mathematics",
+            "title": "g10 coordinate geo",
+            "status": "To Do"
+        },
+        {
+            "id": 60,
+            "subject": "Mathematics",
+            "title": "g11 matrices",
+            "status": "To Do"
+        },
+        {
+            "id": 61,
+            "subject": "Mathematics",
+            "title": "g11 determinants and their props",
+            "status": "To Do"
+        },
+        {
+            "id": 62,
+            "subject": "Mathematics",
+            "title": "g11 vectors",
+            "status": "To Do"
+        },
+        {
+            "id": 63,
+            "subject": "Mathematics",
+            "title": "g11 statis",
+            "status": "To Do"
+        },
+        {
+            "id": 64,
+            "subject": "Mathematics",
+            "title": "g11 prob (permutations, combinations)",
+            "status": "To Do"
+        },
+        {
+            "id": 65,
+            "subject": "Mathematics",
+            "title": "g12 statis",
+            "status": "To Do"
+        },
+        {
+            "id": 66,
+            "subject": "Mathematics",
+            "title": "g12 intro to linear programming",
+            "status": "To Do"
+        },
+        {
+            "id": 67,
+            "subject": "Physics",
+            "title": "g12 app of phy in other fields",
+            "status": "Complete"
+        },
+        {
+            "id": 68,
+            "subject": "Physics",
+            "title": "g11 phy and human society",
+            "status": "To Do"
+        },
+        {
+            "id": 69,
+            "subject": "Physics",
+            "title": "g10 vector quantities",
+            "status": "Complete"
+        },
+        {
+            "id": 70,
+            "subject": "Physics",
+            "title": "g11 vectors",
+            "status": "Complete"
+        },
+        {
+            "id": 71,
+            "subject": "Physics",
+            "title": "g9 motion in straight line nu3/ou2",
+            "status": "To Do"
+        },
+        {
+            "id": 72,
+            "subject": "Physics",
+            "title": "g10 UAMarv",
+            "status": "To Do"
+        },
+        {
+            "id": 73,
+            "subject": "Physics",
+            "title": "g11 motion in 1&2Ds",
+            "status": "To Do"
+        },
+        {
+            "id": 74,
+            "subject": "Physics",
+            "title": "g12 2D motion",
+            "status": "In Progress"
+        },
+        {
+            "id": 75,
+            "subject": "Physics",
+            "title": "g9 Force,Work and Power nu4/ou3",
+            "status": "To Do"
+        },
+        {
+            "id": 76,
+            "subject": "Physics",
+            "title": "g11 Dynamics",
+            "status": "To Do"
+        },
+        {
+            "id": 77,
+            "subject": "Physics",
+            "title": "g9 simple machine nu5/ou5",
+            "status": "To Do"
+        },
+        {
+            "id": 78,
+            "subject": "Physics",
+            "title": "g9 temp and thermometry nu7/ou7",
+            "status": "To Do"
+        },
+        {
+            "id": 79,
+            "subject": "Physics",
+            "title": "g11 heat conduction and calorietry",
+            "status": "To Do"
+        },
+        {
+            "id": 80,
+            "subject": "Physics",
+            "title": "g10 elasticity & static equilibrum",
+            "status": "To Do"
+        },
+        {
+            "id": 81,
+            "subject": "Physics",
+            "title": "g12 fluid mechanics",
+            "status": "To Do"
+        },
+        {
+            "id": 82,
+            "subject": "Physics",
+            "title": "g9 wave/sound nu6/ou8",
+            "status": "To Do"
+        },
+        {
+            "id": 83,
+            "subject": "Physics",
+            "title": "g10 EM waves",
+            "status": "To Do"
+        },
+        {
+            "id": 84,
+            "subject": "Physics",
+            "title": "g10 static and current electricity",
+            "status": "To Do"
+        },
+        {
+            "id": 85,
+            "subject": "Physics",
+            "title": "g11 electrostatics and electric circuit",
+            "status": "To Do"
+        },
+        {
+            "id": 86,
+            "subject": "Physics",
+            "title": "g12 electronics",
+            "status": "To Do"
+        },
+        {
+            "id": 87,
+            "subject": "Physics",
+            "title": "g11 nuclear phy",
+            "status": "To Do"
+        },
+        {
+            "id": 88,
+            "subject": "Physics",
+            "title": "g10 magnetism",
+            "status": "To Do"
+        },
+        {
+            "id": 89,
+            "subject": "Physics",
+            "title": "g12 electro magnetism",
+            "status": "To Do"
+        },
+        {
+            "id": 90,
+            "subject": "Mathematics",
+            "title": "g12 maths apps in business",
+            "status": "To Do"
+        },
+        {
+            "id": 91,
+            "subject": "Mathematics",
+            "title": "g9 (new circ) solving inequalities",
+            "status": "To Do"
+        }
+    ],
+    "entries": [
+        {
+            "id": 1763997268448,
+            "date": "2025-11-24",
+            "time": 101
+        },
+        {
+            "id": 1763905455885,
+            "date": "2025-11-23",
+            "time": 105
+        },
+        {
+            "id": 1763836895693,
+            "date": "2025-11-22",
+            "time": 85
+        },
+        {
+            "id": 1763707435421,
+            "date": "2025-11-21",
+            "time": 30
+        },
+        {
+            "id": 1763663389070,
+            "date": "2025-11-19",
+            "time": 48
+        },
+        {
+            "id": 1763663382214,
+            "date": "2025-11-16",
+            "time": 152
+        },
+        {
+            "id": 1763663368649,
+            "date": "2025-11-12",
+            "time": 63
+        },
+        {
+            "id": 1763663363582,
+            "date": "2025-11-11",
+            "time": 92
+        },
+        {
+            "id": 1763663356281,
+            "date": "2025-11-10",
+            "time": 59
+        },
+        {
+            "id": 1763663351483,
+            "date": "2025-11-09",
+            "time": 120
+        },
+        {
+            "id": 1763663345598,
+            "date": "2025-11-08",
+            "time": 50
+        },
+        {
+            "id": 1763663341344,
+            "date": "2025-11-07",
+            "time": 130
+        },
+        {
+            "id": 1763663337344,
+            "date": "2025-11-06",
+            "time": 40
+        },
+        {
+            "id": 1763663332074,
+            "date": "2025-11-05",
+            "time": 82
+        },
+        {
+            "id": 1763663326461,
+            "date": "2025-11-04",
+            "time": 70
+        },
+        {
+            "id": 1763663322038,
+            "date": "2025-11-03",
+            "time": 51
+        }
+    ],
+    "exams": [
+        {
+            "id": 1,
+            "name": "Mid",
+            "date": "2025-11-27",
+            "createdDate": "2025-11-21",
+            "topics": [
+                {
+                    "id": 1,
+                    "name": "Maths",
+                    "done": true
+                },
+                {
+                    "id": 2,
+                    "name": "Phy",
+                    "done": false
+                },
+                {
+                    "id": 3,
+                    "name": "Chem",
+                    "done": false
+                },
+                {
+                    "id": 4,
+                    "name": "Eng",
+                    "done": true
+                },
+                {
+                    "id": 5,
+                    "name": "Agri",
+                    "done": false
+                },
+                {
+                    "id": 6,
+                    "name": "Bio",
+                    "done": false
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "name": "EUEE",
+            "date": "2026-06-22",
+            "createdDate": "2025-11-21",
+            "topics": [
+                {
+                    "id": 1,
+                    "name": "g9 maths",
+                    "done": true
+                },
+                {
+                    "id": 2,
+                    "name": "g9 phy",
+                    "done": false
+                },
+                {
+                    "id": 3,
+                    "name": "g9 chem",
+                    "done": false
+                },
+                {
+                    "id": 4,
+                    "name": "g9 bio",
+                    "done": false
+                },
+                {
+                    "id": 5,
+                    "name": "g10 maths",
+                    "done": false
+                },
+                {
+                    "id": 6,
+                    "name": "g10 phy",
+                    "done": false
+                },
+                {
+                    "id": 7,
+                    "name": "g10 chem",
+                    "done": false
+                },
+                {
+                    "id": 8,
+                    "name": "g10 bio",
+                    "done": false
+                },
+                {
+                    "id": 9,
+                    "name": "g11 maths",
+                    "done": false
+                },
+                {
+                    "id": 10,
+                    "name": "g11 phy",
+                    "done": false
+                },
+                {
+                    "id": 11,
+                    "name": "g11 chem",
+                    "done": false
+                },
+                {
+                    "id": 12,
+                    "name": "g11 bio",
+                    "done": false
+                },
+                {
+                    "id": 13,
+                    "name": "g12 maths",
+                    "done": false
+                },
+                {
+                    "id": 14,
+                    "name": "g12 phy",
+                    "done": false
+                },
+                {
+                    "id": 15,
+                    "name": "g12 chem",
+                    "done": false
+                },
+                {
+                    "id": 16,
+                    "name": "g12 bio",
+                    "done": false
+                }
+            ]
+        }
+    ],
+    "notes": [
+        {
+            "id": 1763840619784,
+            "title": "Phy G12 U2 Questions",
+            "content": "If you push a door near the hinge with the same force, does torque increase or decrease? Why?\n\nAnswer: |it decreases because less radius. Torque is smaller if 𝑟 is smaller.|",
+            "subject": "Question",
+            "createdDate": "2025-11-22"
+        },
+        {
+            "id": 1763833065593,
+            "title": "Bio G12 U1 Questions",
+            "content": "Q1/50\nWhat is the primary goal of conservation biology?\nA. To exploit natural resources for economic gain\nB. To protect and restore biodiversity\nC. To create new species through genetic engineering\nD. To study the behavior of animals in captivity\n\nAnswer: |B|\n\nQ2/50\nWhich of the following is a renewable natural resource?\nA. Coal\nB. Natural gas\nC. Solar energy\nD. Iron ore\n\nAnswer: |C|\n\nQ3/50\nWhat is the main difference between renewable and non-renewable resources?\nA. Renewable resources are more expensive\nB. Non-renewable resources are found only in Africa\nC. Renewable resources can be replenished naturally\nD. Non-renewable resources are used in technology\n\nAnswer: |C|\n\nQ4/50\nHow does conservation of natural resources contribute to sustainable development?\nA. By increasing pollution\nB. By ensuring the availability of resources for future generations\nC. By reducing the need for education\nD. By promoting the use of fossil fuels\n\nAnswer: |B|\n\nQ5/50\nWhich of the following is an example of a non-renewable resource in Ethiopia?\nA. Coffee plantations\nB. Gold\nC. Wind energy\nD. Cattle\n\nAnswer: |B|\n\nQ6/50\nWhat is the role of biotechnology in ensuring food security?\nA. To reduce the variety of crops\nB. To increase crop yields and improve nutritional content\nC. To promote the use of pesticides\nD. To decrease the availability of food\n\nAnswer: |B|\n\nQ7/50\nHow can biotechnology help in the conservation of natural resources?\nA. By increasing deforestation\nB. By developing genetically modified organisms (GMOs) that require less water and nutrients\nC. By promoting the use of chemical fertilizers\nD. By reducing biodiversity\n\nAnswer: |B|\n\nQ8/50\nWhat is the significance of creating transgenic crops in agriculture?\nA. To decrease crop yields\nB. To introduce desirable traits from one organism into another\nC. To reduce the nutritional value of crops\nD. To promote the use of harmful chemicals\n\nAnswer: |B|\n\nQ9/50\nHow does the application of biotechnology in agriculture benefit society?\nA. By increasing the cost of food\nB. By improving crop yields and reducing the need for pesticides\nC. By decreasing the variety of foods available\nD. By promoting soil erosion\n\nAnswer: |B|\n\nQ10/50\nWhat is the role of microorganisms in traditional fermentation processes?\nA. To prevent fermentation\nB. To convert sugars into alcohol and carbon dioxide\nC. To increase the cost of production\nD. To reduce the nutritional value of the product\n\nAnswer: |B|\n\nQ11/50\nWhich of the following is an example of environmental biotechnology?\nA. Genetic engineering of crops\nB. Use of microorganisms to clean up oil spills\nC. Cloning of animals\nD. Production of vaccines\n\nAnswer: |B|\n\nQ12/50\nWhat is the importance of gene therapy in modern biotechnology?\nA. To create new species\nB. To treat genetic disorders by introducing functional genes\nC. To increase pollution\nD. To promote the use of pesticides\n\nAnswer: |B|\n\nQ13/50\nHow does bioremediation contribute to environmental conservation?\nA. By increasing the use of chemical fertilizers\nB. By using microorganisms to degrade environmental pollutants\nC. By promoting deforestation\nD. By reducing biodiversity\n\nAnswer: |B|\n\nQ14/50\nWhat is the primary advantage of using biopesticides in agriculture?\nA. To increase the use of chemical pesticides\nB. To reduce pest populations with minimal environmental impact\nC. To decrease crop yields\nD. To promote soil erosion\n\nAnswer: |B|\n\nQ15/50\nHow does the conservation of natural resources benefit future generations?\nA. By reducing the availability of resources\nB. By ensuring that resources are available for their use\nC. By increasing pollution\nD. By promoting the use of fossil fuels\n\nAnswer: |B|\n\nQ16/50\nWhat is the role of sustainable development in creating conscious citizens?\nA. To promote the use of non-renewable resources\nB. To encourage responsible use of resources and environmental protection\nC. To increase pollution\nD. To reduce biodiversity\n\nAnswer: |B|\n\nQ17/50\nHow does the application of biotechnology in medicine benefit society?\nA. By increasing the cost of healthcare\nB. By developing new treatments and vaccines\nC. By reducing the availability of medical services\nD. By promoting the use of harmful chemicals\n\nAnswer: |B|\n\nQ18/50\nWhat is the significance of genetic engineering in agriculture?\nA. To decrease crop yields\nB. To introduce desirable traits into crops\nC. To increase the use of pesticides\nD. To promote soil erosion\n\nAnswer: |B|\n\nQ19/50\nHow does the use of genetically modified organisms (GMOs) impact food security?\nA. By reducing crop yields\nB. By increasing crop yields and improving nutritional content\nC. By promoting the use of chemical fertilizers\nD. By decreasing the availability of food\n\nAnswer: |B|\n\nQ20/50\nWhat is the role of microorganisms in the production of antibiotics?\nA. To prevent the production of antibiotics\nB. To produce substances that kill or inhibit the growth of other microorganisms\nC. To increase the cost of antibiotics\nD. To reduce the effectiveness of antibiotics\n\nAnswer: |B|\n\nQ21/50\nHow does the conservation of biodiversity contribute to sustainable development?\nA. By reducing the variety of species\nB. By ensuring the survival of species and ecosystems\nC. By increasing pollution\nD. By promoting the use of fossil fuels\n\nAnswer: |B|\n\nQ22/50\nWhat is the primary goal of creating conscious citizens through education?\nA. To promote the use of non-renewable resources\nB. To encourage responsible behavior and environmental protection\nC. To increase pollution\nD. To reduce biodiversity\n\nAnswer: |B|\n\nQ23/50\nHow does the application of biotechnology in environmental conservation benefit the ecosystem?\nA. By increasing the use of chemical pesticides\nB. By using microorganisms to clean up pollutants\nC. By promoting deforestation\nD. By reducing biodiversity\n\nAnswer: |B|\n\nQ24/50\nWhat is the significance of traditional uses of biotechnology in modern society?\nA. To reduce the variety of foods available\nB. To preserve cultural practices and promote sustainable living\nC. To increase the cost of food production\nD. To promote the use of harmful chemicals\n\nAnswer: |B|\n\nQ25/50\nHow does the use of microorganisms in bioremediation benefit the environment?\nA. By increasing pollution\nB. By degrading environmental pollutants\nC. By promoting the use of chemical fertilizers\nD. By reducing biodiversity\n\nAnswer: |B|\n\nQ26/50\nWhat is the role of biotechnology in improving the nutritional content of crops?\nA. To decrease the nutritional value of crops\nB. To introduce genes that enhance nutritional content\nC. To increase the use of pesticides\nD. To promote soil erosion\n\nAnswer: |B|\n\nQ27/50\nHow does the conservation of water resources contribute to sustainable development?\nA. By reducing the availability of water\nB. By ensuring the availability of water for future generations\nC. By increasing pollution\nD. By promoting the use of fossil fuels\n\nAnswer: |B|\n\nQ28/50\nWhat is the significance of using renewable energy sources in sustainable development?\nA. To increase pollution\nB. To reduce dependence on non-renewable resources\nC. To promote deforestation\nD. To reduce biodiversity\n\nAnswer: |B|\n\nQ29/50\nHow does the application of biotechnology in agriculture benefit farmers?\nA. By increasing the cost of production\nB. By improving crop yields and reducing pest damage\nC. By promoting the use of harmful chemicals\nD. By reducing the variety of crops available\n\nAnswer: |B|\n\nQ30/50\nWhat is the role of microorganisms in the production of biofuels?\nA. To prevent the production of biofuels\nB. To convert biological materials into fuels\nC. To increase the cost of biofuels\nD. To reduce the efficiency of biofuels\n\nAnswer: |B|\n\nQ31/50\nHow does the conservation of forest resources contribute to sustainable development?\nA. By reducing the availability of timber\nB. By preserving habitats and reducing carbon emissions\nC. By increasing pollution\nD. By promoting the use of fossil fuels\n\nAnswer: |B|\n\nQ32/50\nWhat is the primary goal of using biopesticides in agriculture?\nA. To increase the use of chemical pesticides\nB. To control pests with minimal environmental impact\nC. To reduce crop yields\nD. To promote soil erosion\n\nAnswer: |B|\n\nQ33/50\nHow does the use of genetically modified organisms (GMOs) in agriculture benefit farmers?\nA. By increasing the cost of production\nB. By improving crop yields and reducing pest damage\nC. By promoting the use of harmful chemicals\nD. By reducing the variety of crops available\n\nAnswer: |B|\n\nQ34/50\nWhat is the significance of using microorganisms in the production of enzymes?\nA. To prevent the production of enzymes\nB. To produce enzymes for various industrial applications\nC. To increase the cost of enzymes\nD. To reduce the efficiency of enzymes\n\nAnswer: |B|\n\nQ35/50\nHow does the conservation of soil resources contribute to sustainable development?\nA. By reducing the availability of soil\nB. By preserving soil fertility and preventing erosion\nC. By increasing pollution\nD. By promoting the use of fossil fuels\n\nAnswer: |B|\n\nQ36/50\nWhat is the role of biotechnology in the production of vaccines?\nA. To prevent the production of vaccines\nB. To develop vaccines for disease prevention\nC. To increase the cost of vaccines\nD. To reduce the effectiveness of vaccines\n\nAnswer: |B|\n\nQ37/50\nHow does the use of microorganisms in waste management benefit the environment?\nA. By increasing pollution\nB. By decomposing organic waste\nC. By promoting the use of chemical fertilizers\nD. By reducing biodiversity\n\nAnswer: |B|\n\nQ38/50\nWhat is the significance of using renewable energy sources in reducing carbon emissions?\nA. To increase carbon emissions\nB. To reduce dependence on fossil fuels and lower carbon emissions\nC. To promote deforestation\nD. To reduce biodiversity\n\nAnswer: |B|\n\nQ39/50\nHow does the application of biotechnology in medicine benefit public health?\nA. By increasing the cost of healthcare\nB. By developing new treatments and vaccines\nC. By reducing the availability of medical services\nD. By promoting the use of harmful chemicals\n\nAnswer: |B|\n\nQ40/50\nWhat is the role of microorganisms in the production of bioplastics?\nA. To prevent the production of bioplastics\nB. To produce biodegradable plastics from renewable resources\nC. To increase the cost of bioplastics\nD. To reduce the efficiency of bioplastics\n\nAnswer: |B|\n\nQ41/50\nHow does the conservation of natural resources contribute to economic development?\nA. By reducing economic opportunities\nB. By ensuring the sustainable use of resources for economic activities\nC. By increasing pollution\nD. By promoting the use of fossil fuels\n\nAnswer: |B|\n\nQ42/50\nWhat is the primary goal of using biotechnology in environmental conservation?\nA. To increase pollution\nB. To clean up environmental pollutants using microorganisms\nC. To promote deforestation\nD. To reduce biodiversity\n\nAnswer: |B|\n\nQ43/50\nHow does the use of genetically modified organisms (GMOs) in agriculture impact the environment?\nA. By increasing the use of chemical pesticides\nB. By reducing the need for pesticides and improving crop yields\nC. By promoting soil erosion\nD. By reducing biodiversity\n\nAnswer: |B|\n\nQ44/50\nWhat is the significance of using microorganisms in the production of biofertilizers?\nA. To prevent the production of biofertilizers\nB. To improve soil fertility and plant growth\nC. To increase the cost of biofertilizers\nD. To reduce the effectiveness of biofertilizers\n\nAnswer: |B|\n\nQ45/50\nHow does the conservation of natural resources benefit local communities?\nA. By reducing their access to resources\nB. By ensuring the sustainable use of resources for their livelihoods\nC. By increasing pollution\nD. By promoting the use of fossil fuels\n\nAnswer: |B|\n\nQ46/50\nWhat is the role of biotechnology in the production of biosensors?\nA. To prevent the production of biosensors\nB. To develop devices that detect biological substances\nC. To increase the cost of biosensors\nD. To reduce the effectiveness of biosensors\n\nAnswer: |B|\n\nQ47/50\nHow does the use of microorganisms in bioremediation benefit human health?\nA. By increasing pollution\nB. By cleaning up environmental pollutants and reducing exposure to toxins\nC. By promoting the use of chemical fertilizers\nD. By reducing biodiversity\n\nAnswer: |B|\n\nQ48/50\nWhat is the significance of using renewable energy sources in energy security?\nA. To increase dependence on fossil fuels\nB. To reduce dependence on imported energy and ensure a stable energy supply\nC. To promote deforestation\nD. To reduce biodiversity\n\nAnswer: |B|\n\nQ49/50\nHow does the application of biotechnology in agriculture benefit the economy?\nA. By increasing the cost of production\nB. By improving crop yields and reducing the need for imports\nC. By promoting the use of harmful chemicals\nD. By reducing the variety of crops available\n\nAnswer: |B|\n\nQ50/50\nWhat is the role of microorganisms in the production of biogas?\nA. To prevent the production of biogas\nB. To convert organic waste into biogas\nC. To increase the cost of biogas\nD. To reduce the efficiency of biogas\n\nAnswer: |B|",
+            "subject": "Question",
+            "createdDate": "2025-11-22"
+        },
+        {
+            "id": 1763835500303,
+            "title": "Phy G12 Notes",
+            "content": "both of them are v initial square.  the difference is\n\nR = sin (2θ) divided by g\nH = (sin θ)² divieded by 2g\n\nalso\n\nH/R = tan(θ) / 4\n\n**Range is max at 45 degree**\n\n\nA rigid body is an object that doesn’t bend, stretch, squash, or change shape no matter what forces you apply to it.\n\nIt has:\nFixed shape\nFixed size\nFixed distance between any two points on it\n\nSo if two points on the object are 10 cm apart today, they’ll be 10 cm apart during the entire motion — even if you push, pull, spin, or throw the object.\n\n\nCentripental Acceleration: V²/r  or  ω²r\n\ndirection of torque: clockwise or anticlockwise\n\nHumans have observed the movements of the planets, stars, and other celestial objects for thousands of years. In early history, these observations led scientists to regard Earth as the center of the Universe. This geo centric model was elaborated and formalized by the Greek astronomer **Claudius Ptolemy**\n\nPolish astronomer **Nicolaus Copernicus** suggested that Earth and the other planets revolved incircular orbits around the Sun. (**The heliocentric model**)\n\nDanish astronomer **Tycho Brahe** wanted to determine how the universe was constructed and pursued a project to determine the positions of both stars and planets. the tools he used: **sextant and a compass**\n\nThe point at which a planet is nearest the Sun is called **perihelion.**\nThe point of greatest separation is **aphelion**\n\n**TRICK TO MEMORIZE THEM:**\nPERIhelion\nThink:\n👉 PERI sounds like “pair-i” = we’re paired close together.\nSo perihelion = the CLOSE point.\n\nAPhelion\n👉 APhelion = “AWAY-phelion”\nJust slap an A = Away.\n(planet is far, chilling in deep space like “don’t talk to me.”)\n\nWhen calculating gravitational force using Newton’s law of gravitation. **the 𝑟 is the distance between the centers of mass of the two objects, not the distance between their surfaces.**",
+            "subject": "Note",
+            "createdDate": "2025-11-22"
+        },
+        {
+            "id": 1763751731210,
+            "title": "Chem G12 U1 Questions",
+            "content": "Q1/60\nThe ion-product constant for water, Kw, at 25°C is:\nA. 1.0 x 10⁻⁷\nB. 1.0 x 10⁻¹⁴\nC. 7.0\nD. 14.0\n\nAnswer: |B|\n\nQ2/60\nThe end point of a titration is observed when:\nA. The moles of acid equal the moles of base.\nB. The pH of the solution is exactly 7.\nC. The indicator undergoes a color change.\nD. The buffer capacity is reached.\n\nAnswer: |C|\n\nQ3/60\nThe species HSO₄⁻ is considered:\nA. Only an acid\nB. Only a base\nC. Amphiprotic\nD. Neither an acid nor a base\n\nAnswer: |C|\n\nQ4/60\nWhat is the hydronium ion concentration, H₃O⁺, in a solution with a pH of 2.0?\nA. 1.0 x 10² M\nB. 2.0 M\nC. 1.0 x 10⁻² M\nD. 1.0 x 10⁻¹² M\n\nAnswer: |C|\n\nQ5/60\nIf the concentration of an acid is increased, what is the expected effect on its pH?\nA. The pH will increase.\nB. The pH will decrease.\nC. The pH will remain unchanged.\nD. The pH will approach 7.\n\nAnswer: |B|\n\nQ6/60\nIf the pH of a solution is 13.0, the solution is:\nA. Strongly acidic\nB. Weakly acidic\nC. Neutral\nD. Strongly basic\n\nAnswer: |D|\n\nQ7/60\nIn a conjugate acid-base pair, the acid and base differ by:\nA. One proton (H⁺).\nB. One electron.\nC. One hydroxide ion (OH⁻).\nD. A pair of electrons.\n\nAnswer: |A|\n\nExplanation: |A conjugate acid-base pair consists of two species that differ from each other only by the presence or absence of a single proton (H⁺).| \n\nQ8/60\nAn acid-base indicator is typically a:\nA. Strong acid or strong base that changes color.\nB. Salt that changes color based on concentration.\nC. Weak organic acid or base whose conjugate pair has a different color.\nD. Catalyst that enhances the rate of neutralization.\n\nAnswer: | C.|\n\nSimple explanation:\n|An acid–base indicator (such as litmus, phenolphthalein, or methyl orange) is a weak acid or weak base that exists in two forms: an acid form (H-indicator) and a base form (indicator⁻), each with different colors 🎨. When the pH changes, the indicator either gains or loses a proton 🔁, switching between its two colored forms. At low pH, it stays mostly in its acid form (Color A) 🔴, and at high pH, it shifts to its base form (Color B) 🔵. Strong acids or bases cannot act as indicators because they fully dissociate and can’t shift between colors ❌. Salts don’t change color with pH ❌, and indicators aren’t catalysts—they don’t speed up the reaction ⚡; they simply show color changes to signal pH shifts.|",
+            "subject": "Question",
+            "createdDate": "2025-11-21"
+        }
+    ]
+}
