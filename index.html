@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EUEE Dashboard</title>
-    <!-- Favicon -->
+    <!-- Favicon (Make sure this file is also in the folder if you have it) -->
     <link rel="icon" type="image/png" sizes="128x128" href="icon128.png">
 
     <!-- 1. LOCAL TAILWIND CSS -->
@@ -14,29 +14,18 @@
             theme: {
                 extend: {
                     colors: {
-                        // Using Zinc for a neutral, technical dark theme
-                        gray: { 
-                            50: '#fafafa', 
-                            100: '#f4f4f5', 
-                            200: '#e4e4e7', 
-                            300: '#d4d4d8', 
-                            400: '#a1a1aa', 
-                            500: '#71717a', 
-                            600: '#52525b', 
-                            700: '#3f3f46', 
+                        // CUSTOM ZINC-BASED GRAY SCALE
+                        gray: {
+                            50: '#fafafa', 100: '#f4f4f5', 200: '#e4e4e7', 300: '#d4d4d8', 400: '#a1a1aa',
+                            500: '#71717a', 600: '#52525b', 700: '#3f3f46',
                             750: '#27272a', // Custom mid-dark
                             800: '#27272a', 
                             850: '#202023', // Custom darker
                             900: '#18181b', 
                             950: '#09090b' 
                         },
-                        // Technical Colors (Replacing Purple with Indigo/Blue)
-                        tech: {
-                            primary: '#6366f1', // Indigo 500
-                            secondary: '#3b82f6', // Blue 500
-                            accent: '#10b981', // Emerald 500
-                        },
-                        notion: { red: '#ef4444', yellow: '#eab308', green: '#22c55e', bio: '#f97316', chem: '#14b8a6', math: '#3b82f6', phy: '#8b5cf6' }
+                        // Notion-inspired subject colors
+                        notion: { red: '#ff6b6b', yellow: '#feca57', green: '#1dd1a1', bio: '#e17055', chem: '#00b894', math: '#0984e3', phy: '#a29bfe' }
                     }
                 }
             }
@@ -230,6 +219,11 @@
                 
                 <div class="flex-grow"></div>
 
+                <!-- ADDED: Import Note Button -->
+                <button onclick="openImportModal()" class="flex items-center gap-2 px-3 py-1.5 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-md transition-colors shadow-sm mr-2">
+                    <i data-lucide="download" class="w-4 h-4"></i> Import Note
+                </button>
+
                 <button onclick="openNoteModal()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-sm">
                     <i data-lucide="plus" class="w-4 h-4"></i> New Note
                 </button>
@@ -368,6 +362,25 @@
         </div>
     </div>
 
+    <!-- Import Note Modal -->
+    <div id="import-note-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
+        <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-2xl w-full max-w-md p-6 transition-colors duration-300">
+            <h2 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                <i data-lucide="download" class="text-indigo-500"></i> Import Note
+            </h2>
+            <div class="flex flex-col gap-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 uppercase mb-1">Paste Note Code Here</label>
+                    <textarea id="import-note-content" rows="6" placeholder="Paste the exported note text here..." class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md p-2.5 text-gray-900 dark:text-gray-200 focus:outline-none focus:border-indigo-500 resize-none font-mono text-xs"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 mt-2">
+                    <button type="button" onclick="closeImportModal()" class="px-4 py-2 rounded-md text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 text-sm">Cancel</button>
+                    <button type="button" onclick="saveImportedNote()" class="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white font-medium shadow-lg text-sm">Import</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
      <div id="view-note-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden px-4">
         <div class="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col transition-colors duration-300">
             <div id="view-note-header" class="p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-start rounded-t-xl bg-gray-50 dark:bg-gray-800/50">
@@ -390,9 +403,14 @@
                     </div>
             </div>
              <div class="p-3 border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900 flex justify-between items-center rounded-b-xl transition-colors">
-                 <button onclick="openNoteModal(currentViewNoteId)" class="flex items-center gap-2 px-3 py-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-400/10 rounded-md transition-colors text-sm font-medium">
-                    <i data-lucide="edit" class="w-4 h-4"></i> Edit Note
-                </button>
+                 <div class="flex gap-2">
+                     <button id="btn-export-note" class="flex items-center gap-2 px-3 py-1.5 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors text-sm font-medium">
+                        <i data-lucide="share-2" class="w-4 h-4"></i> Share
+                    </button>
+                     <button onclick="openNoteModal(currentViewNoteId)" class="flex items-center gap-2 px-3 py-1.5 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-400/10 rounded-md transition-colors text-sm font-medium">
+                        <i data-lucide="edit" class="w-4 h-4"></i> Edit Note
+                    </button>
+                 </div>
                  <button id="btn-delete-note" class="flex items-center gap-2 px-3 py-1.5 text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-400/10 rounded-md transition-colors text-sm font-medium">
                     <i data-lucide="trash-2" class="w-4 h-4"></i> Delete Note
                 </button>
@@ -959,6 +977,105 @@
         }
 
         function closeNoteModal() { document.getElementById('add-note-modal').classList.add('hidden'); editingNoteId = null; }
+        
+        // --- NEW: Import/Export Logic ---
+        function openImportModal() {
+            document.getElementById('import-note-modal').classList.remove('hidden');
+            document.getElementById('import-note-content').value = '';
+            document.getElementById('import-note-content').focus();
+        }
+        
+        function closeImportModal() {
+            document.getElementById('import-note-modal').classList.add('hidden');
+        }
+        
+        function saveImportedNote() {
+            const contentStr = document.getElementById('import-note-content').value.trim();
+            if(!contentStr) return;
+            
+            try {
+                const importedData = JSON.parse(contentStr);
+                if(importedData.title && importedData.content) {
+                    saveStateToHistory();
+                    const newId = Date.now();
+                    const today = new Date().toISOString().split('T')[0];
+                    notes.unshift({ 
+                        id: newId, 
+                        title: importedData.title, 
+                        content: importedData.content, 
+                        subject: importedData.subject || 'Note', 
+                        createdDate: importedData.createdDate || today 
+                    });
+                    renderNotesApp();
+                    saveFile();
+                    closeImportModal();
+                    alert("Note imported successfully!");
+                } else {
+                    alert("Invalid note format.");
+                }
+            } catch(e) {
+                alert("Invalid data. Please ensure you copied the entire code.");
+            }
+        }
+
+        function viewNote(id) {
+            const note = notes.find(n => n.id === id);
+            if (!note) return;
+            currentViewNoteId = id; 
+
+            const header = document.getElementById('view-note-header');
+            const subjectEl = document.getElementById('view-note-subject');
+            const iconEl = document.getElementById('view-note-icon');
+            const titleEl = document.getElementById('view-note-title');
+            const dateEl = document.getElementById('view-note-date');
+            const contentEl = document.getElementById('view-note-content');
+            const deleteBtn = document.getElementById('btn-delete-note');
+            
+            // Setup Export Button
+            const exportBtn = document.getElementById('btn-export-note');
+            exportBtn.onclick = () => {
+                const dataToExport = JSON.stringify({
+                    title: note.title,
+                    content: note.content,
+                    subject: note.subject,
+                    createdDate: note.createdDate
+                });
+                navigator.clipboard.writeText(dataToExport).then(() => {
+                    const originalText = exportBtn.innerHTML;
+                    exportBtn.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Copied!`;
+                    lucide.createIcons();
+                    setTimeout(() => {
+                        exportBtn.innerHTML = originalText;
+                        lucide.createIcons();
+                    }, 2000);
+                });
+            };
+
+            let colorClass = 'text-gray-400';
+            let bgClass = 'bg-gray-50 dark:bg-gray-800/50';
+            
+            if (note.subject === 'Question') { 
+                colorClass = 'text-notion-yellow'; 
+                bgClass = 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700/30'; 
+            } else if (note.subject === 'Note') { 
+                colorClass = 'text-notion-green'; 
+                bgClass = 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700/30'; 
+            }
+
+            header.className = `p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-start rounded-t-xl transition-colors ${bgClass}`;
+            subjectEl.className = `text-xs font-bold uppercase tracking-wider ${colorClass}`;
+            iconEl.className = `w-4 h-4 ${colorClass}`;
+            
+            subjectEl.innerText = note.subject;
+            titleEl.innerText = note.title;
+            dateEl.innerText = `Created on ${note.createdDate}`;
+            contentEl.innerHTML = formatContent(note.content);
+            deleteBtn.onclick = () => deleteNote(note.id);
+
+            document.getElementById('view-note-modal').classList.remove('hidden');
+             if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
         function closeViewNoteModal() { document.getElementById('view-note-modal').classList.add('hidden'); currentViewNoteId = null; }
 
         // UPDATED: Handles **bold** and |spoiler|
@@ -1067,45 +1184,6 @@
             renderNotesApp();
             saveFile();
         }
-
-        function viewNote(id) {
-            const note = notes.find(n => n.id === id);
-            if (!note) return;
-            currentViewNoteId = id; 
-
-            const header = document.getElementById('view-note-header');
-            const subjectEl = document.getElementById('view-note-subject');
-            const iconEl = document.getElementById('view-note-icon');
-            const titleEl = document.getElementById('view-note-title');
-            const dateEl = document.getElementById('view-note-date');
-            const contentEl = document.getElementById('view-note-content');
-            const deleteBtn = document.getElementById('btn-delete-note');
-
-            let colorClass = 'text-gray-400';
-            let bgClass = 'bg-gray-50 dark:bg-gray-800/50';
-            
-            if (note.subject === 'Question') { 
-                colorClass = 'text-notion-yellow'; 
-                bgClass = 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700/30'; 
-            } else if (note.subject === 'Note') { 
-                colorClass = 'text-notion-green'; 
-                bgClass = 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700/30'; 
-            }
-
-            header.className = `p-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-start rounded-t-xl transition-colors ${bgClass}`;
-            subjectEl.className = `text-xs font-bold uppercase tracking-wider ${colorClass}`;
-            iconEl.className = `w-4 h-4 ${colorClass}`;
-            
-            subjectEl.innerText = note.subject;
-            titleEl.innerText = note.title;
-            dateEl.innerText = `Created on ${note.createdDate}`;
-            contentEl.innerHTML = formatContent(note.content);
-            deleteBtn.onclick = () => deleteNote(note.id);
-
-            document.getElementById('view-note-modal').classList.remove('hidden');
-             if(typeof lucide !== 'undefined') lucide.createIcons();
-        }
-
 
         function renderNotesApp() {
             const container = document.getElementById('notes-container');
@@ -1321,7 +1399,7 @@
                                 color: tickColor, 
                                 maxRotation: 45, 
                                 minRotation: 0,
-                                autoSkip: true,
+                                autoSkip: true, 
                                 maxTicksLimit: 14 
                             } 
                         } 
