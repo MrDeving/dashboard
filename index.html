@@ -14,15 +14,19 @@
             theme: {
                 extend: {
                     colors: {
-                        // CUSTOM ZINC-BASED GRAY SCALE
+                        // CUSTOM SLATE-BASED GRAY SCALE
                         gray: {
-                            50: '#fafafa', 100: '#f4f4f5', 200: '#e4e4e7', 300: '#d4d4d8', 400: '#a1a1aa',
-                            500: '#71717a', 600: '#52525b', 700: '#3f3f46',
-                            750: '#27272a', // Custom mid-dark
-                            800: '#27272a', 
-                            850: '#202023', // Custom darker
-                            900: '#18181b', 
-                            950: '#09090b' 
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                            950: '#020617'
                         },
                         // Notion-inspired subject colors
                         notion: { red: '#ff6b6b', yellow: '#feca57', green: '#1dd1a1', bio: '#e17055', chem: '#00b894', math: '#0984e3', phy: '#a29bfe' }
@@ -43,11 +47,11 @@
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #a1a1aa; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #71717a; }
-        .dark ::-webkit-scrollbar-track { background: #18181b; }
-        .dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
-        .dark ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .dark ::-webkit-scrollbar-track { background: #0f172a; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         
@@ -61,7 +65,7 @@
         
         /* --- Spoiler & Bold CSS --- */
         .spoiler {
-            background-color: #52525b;
+            background-color: #475569;
             color: transparent;
             cursor: pointer;
             border-radius: 4px;
@@ -69,19 +73,19 @@
             user-select: none;
             transition: all 0.2s ease-in-out;
         }
-        .spoiler:hover { background-color: #71717a; }
+        .spoiler:hover { background-color: #64748b; }
         .spoiler.revealed { background-color: transparent; color: inherit; user-select: text; }
         
         /* Custom Bold Style */
         strong { font-weight: 800; }
-        .dark strong { color: #e4e4e7; }
-        strong { color: #18181b; }
+        .dark strong { color: #e2e8f0; }
+        strong { color: #0f172a; }
 
         /* Transition for theme toggle */
         body { transition: background-color 0.3s ease, color 0.3s ease; }
     </style>
 </head>
-<body class="bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden">
+<body class="bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden">
 
     <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex-shrink-0 transition-colors duration-300">
         <div class="w-full px-4 py-2 flex justify-between items-center">
@@ -536,7 +540,7 @@
                 document.getElementById('data-overlay').classList.add('hidden');
                 const btnSave = document.getElementById('btn-save');
                 btnSave.disabled = false;
-                btnSave.classList.remove('bg-gray-300', 'dark:bg-gray-700', 'text-gray-500', 'cursor-not-allowed');
+                btnSave.classList.remove('bg-gray-300', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'cursor-not-allowed');
                 btnSave.classList.add('bg-emerald-600', 'hover:bg-emerald-500', 'text-white', 'ring-emerald-400/50');
                 
                 switchMainTab('topics');
@@ -779,24 +783,23 @@
             const ctx = document.getElementById('statusChart').getContext('2d');
             // Theme-aware colors
             const isDark = settings.theme === 'dark';
-            const emptyColor = isDark ? '#27272a' : '#e4e4e7'; // gray-800 or gray-200
+            const todoColor = '#A3A3A3';
             const textColor = isDark ? '#ffffff' : '#18181b';
             const subTextColor = isDark ? '#9ca3af' : '#71717a';
 
             if (topicChartInstance) { 
-                topicChartInstance.data.datasets[0].data = [todo, comp, prog]; 
-                topicChartInstance.data.datasets[0].backgroundColor = [emptyColor, '#22c55e', '#eab308'];
+                topicChartInstance.data.datasets[0].data = [todo, comp, prog];
+                topicChartInstance.data.datasets[0].backgroundColor = [todoColor, '#22c55e', '#eab308'];
                 topicChartInstance.update(); 
             } 
             else {
                 topicChartInstance = new Chart(ctx, { 
                     type: 'doughnut', 
-                    plugins: [ChartDataLabels], 
                     data: { 
                         labels: ['To-do', 'Complete', 'In progress'], 
                         datasets: [{ 
-                            data: [todo, comp, prog], 
-                            backgroundColor: [emptyColor, '#22c55e', '#eab308'], 
+                            data: [todo, comp, prog],
+                            backgroundColor: [todoColor, '#22c55e', '#eab308'],
                             borderWidth: 0, 
                             hoverOffset: 4 
                         }] 
@@ -805,19 +808,7 @@
                         responsive: true, 
                         maintainAspectRatio: false, 
                         plugins: { 
-                            legend: { position: 'bottom', labels: { color: subTextColor, usePointStyle: true, padding: 20 } }, 
-                            datalabels: { 
-                                color: isDark ? '#1f2937' : '#ffffff', // Contrast text inside segments
-                                font: { weight: 'bold', size: 12 }, 
-                                textAlign: 'center',
-                                formatter: (value, ctx) => { 
-                                    let sum = 0; 
-                                    ctx.chart.data.datasets[0].data.map(d => sum+=d); 
-                                    let percentage = (value * 100 / sum).toFixed(1) + "%";
-                                    if (value === 0) return ""; 
-                                    return value + "\n(" + percentage + ")"; 
-                                } 
-                            } 
+                            legend: { position: 'bottom', labels: { color: subTextColor, usePointStyle: true, padding: 20 } }
                         }, 
                         cutout: '70%' 
                     },
@@ -1234,11 +1225,11 @@
                             <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100 leading-tight group-hover:text-indigo-500 transition-colors pr-8">${note.title}</h3>
                         </div>
                         
-                        <div class="flex flex-col gap-1 absolute top-2 right-2 opacity-50 hover:opacity-100 transition-opacity">
-                            <button onclick="moveNote(${note.id}, 'up')" class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" title="Move Up">
+                        <div class="flex flex-col gap-1 absolute top-2 right-2">
+                            <button onclick="moveNote(${note.id}, 'up')" class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200" title="Move Up">
                                 <i data-lucide="chevron-up" class="w-3 h-3"></i>
                             </button>
-                            <button onclick="moveNote(${note.id}, 'down')" class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white" title="Move Down">
+                            <button onclick="moveNote(${note.id}, 'down')" class="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded text-gray-700 dark:text-gray-200" title="Move Down">
                                 <i data-lucide="chevron-down" class="w-3 h-3"></i>
                             </button>
                         </div>
