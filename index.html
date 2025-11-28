@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EUEE Dashboard</title>
+    <title>Dashboard</title>
     <!-- Favicon (Make sure this file is also in the folder if you have it) -->
     <link rel="icon" type="image/png" sizes="128x128" href="icon128.png">
 
@@ -85,81 +85,104 @@
         body { transition: background-color 0.3s ease, color 0.3s ease; }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans antialiased h-screen flex flex-col overflow-hidden">
+<body>
 
-    <nav class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 flex-shrink-0 transition-colors duration-300">
-        <div class="w-full px-4 py-2 flex justify-between items-center">
-            <div class="flex space-x-2 bg-gray-100 dark:bg-gray-950 p-1 rounded-lg overflow-x-auto">
-                <button onclick="switchMainTab('topics')" id="nav-btn-topics" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all bg-indigo-600 text-white shadow-sm whitespace-nowrap">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Topics
-                </button>
-                <button onclick="switchMainTab('exams')" id="nav-btn-exams" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 whitespace-nowrap">
-                    <i data-lucide="calendar-clock" class="w-4 h-4"></i> Exams
-                </button>
-                <button onclick="switchMainTab('notes')" id="nav-btn-notes" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 whitespace-nowrap">
-                    <i data-lucide="sticky-note" class="w-4 h-4"></i> Notes
-                </button>
-                <button onclick="switchMainTab('time')" id="nav-btn-time" class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 whitespace-nowrap">
-                    <i data-lucide="clock" class="w-4 h-4"></i> Reading
-                </button>
+    <div id="app-layout" class="bg-[#F3F4F6] dark:bg-[#0B1120] text-slate-900 dark:text-slate-100 font-sans antialiased h-screen flex overflow-hidden transition-colors duration-300 hidden">
+        
+    <!-- SIDEBAR START -->
+    <aside id="sidebar" class="bg-white dark:bg-[#111827] border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300 ease-in-out w-64 h-full z-20 relative flex-shrink-0">
+        <!-- Sidebar Header with Toggle -->
+        <div class="p-4 flex items-center justify-between h-16 border-b border-gray-100 dark:border-gray-800/50">
+            <div class="flex items-center gap-3 overflow-hidden whitespace-nowrap sidebar-text transition-opacity duration-200">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <i data-lucide="layout" class="w-5 h-5 text-white"></i>
+                </div>
+                <span class="font-bold text-lg tracking-tight">Biqu</span>
             </div>
-            <div class="flex gap-3 shrink-0 items-center">
-                <!-- Theme Toggle Button -->
-                <button onclick="toggleTheme()" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors border border-gray-200 dark:border-gray-700 shadow-sm" title="Toggle Theme">
-                    <i data-lucide="moon" class="w-4 h-4 hidden dark:block"></i>
-                    <i data-lucide="sun" class="w-4 h-4 block dark:hidden"></i>
+            <!-- Toggle Button -->
+            <button onclick="toggleSidebar()" class="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors absolute right-3">
+                <i id="sidebar-toggle-icon" data-lucide="panel-left-close" class="w-5 h-5"></i>
+            </button>
+        </div>
+
+        <!-- Nav Links -->
+        <div class="flex-grow overflow-y-auto py-6 px-3 space-y-1">
+            <!-- Topics -->
+            <button onclick="switchMainTab('topics')" id="nav-btn-topics" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 group relative">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 flex-shrink-0"></i>
+                <span class="sidebar-text whitespace-nowrap transition-opacity duration-200">Topics</span>
+            </button>
+
+            <!-- Exams -->
+            <button onclick="switchMainTab('exams')" id="nav-btn-exams" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200 group relative">
+                <i data-lucide="calendar-clock" class="w-5 h-5 flex-shrink-0"></i>
+                <span class="sidebar-text whitespace-nowrap transition-opacity duration-200">Exams</span>
+            </button>
+
+            <!-- Notes -->
+            <button onclick="switchMainTab('notes')" id="nav-btn-notes" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200 group relative">
+                <i data-lucide="sticky-note" class="w-5 h-5 flex-shrink-0"></i>
+                <span class="sidebar-text whitespace-nowrap transition-opacity duration-200">Notes</span>
+            </button>
+
+            <!-- Reading -->
+            <button onclick="switchMainTab('time')" id="nav-btn-time" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200 group relative">
+                <i data-lucide="clock" class="w-5 h-5 flex-shrink-0"></i>
+                <span class="sidebar-text whitespace-nowrap transition-opacity duration-200">Reading</span>
+            </button>
+        </div>
+
+        <!-- Bottom Section (Optional: Could put user profile here) -->
+        <div class="p-4 border-t border-gray-100 dark:border-gray-800/50">
+             <!-- You can add bottom links here later -->
+        </div>
+    </aside>
+    <!-- SIDEBAR END -->
+
+    <!-- MAIN CONTENT WRAPPER START -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        
+        <!-- TOP HEADER (File Actions & Theme) -->
+        <header class="h-16 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200/50 dark:border-gray-800/50 flex items-center justify-between px-6 flex-shrink-0 z-30 sticky top-0">
+            <h1 id="header-title" class="text-lg font-bold text-gray-800 dark:text-gray-100">Dashboard</h1>
+            
+            <div class="flex items-center gap-3">
+                <!-- Theme Toggle -->
+                <button onclick="toggleTheme()" class="p-2 rounded-full text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
                 </button>
                 
-                <div class="h-6 w-px bg-gray-300 dark:bg-gray-700 mx-1"></div>
+                <div class="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
 
-                <button id="btn-undo" onclick="undoLastAction()" disabled class="flex items-center gap-2 px-3 py-1.5 bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 font-bold rounded-md transition-all opacity-50 cursor-not-allowed hover:bg-gray-300 dark:hover:bg-gray-700 border border-transparent">
+                <!-- Undo -->
+                <button id="btn-undo" onclick="undoLastAction()" disabled class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-500 disabled:opacity-30 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i> <span class="hidden sm:inline">Undo</span>
                 </button>
-                <button id="btn-open" onclick="openFileNew()" class="flex items-center gap-2 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-md transition-colors shadow-sm ring-1 ring-indigo-400/50">
-                    <i data-lucide="folder-open" class="w-4 h-4"></i> <span class="hidden sm:inline">Switch File</span>
-                </button>
-                <button id="btn-save" onclick="saveFile()" disabled class="flex items-center gap-2 px-3 py-1.5 bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed text-xs font-bold rounded-md transition-colors shadow-sm border border-transparent">
-                    <i data-lucide="save" class="w-4 h-4"></i> <span class="hidden sm:inline">Save</span>
-                </button>
-            </div>
-        </div>
-    </nav>
 
-    <div id="data-overlay" class="absolute inset-0 z-40 bg-white/95 dark:bg-gray-950/95 flex flex-col items-center justify-center text-center p-6 backdrop-blur-sm transition-colors duration-300">
-        <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl max-w-lg w-full">
-            <div id="overlay-initial" class="flex flex-col items-center">
-                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6"><i data-lucide="database" class="w-8 h-8 text-indigo-600 dark:text-indigo-400"></i></div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Load Your Data</h2>
-                <p class="text-gray-500 dark:text-gray-400 mb-8">Connect to your local <code>data.json</code> file.</p>
-                <button onclick="openFileNew()" class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-indigo-500/25 group">
-                    <i data-lucide="folder-search" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> Select data.json
+                <!-- Switch File -->
+                <button onclick="openFileNew()" class="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 rounded-lg shadow-sm transition-all">
+                    <i data-lucide="folder-open" class="w-4 h-4"></i> Switch File
                 </button>
-            </div>
-            <div id="overlay-reconnect" class="hidden flex flex-col items-center">
-                <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-6"><i data-lucide="file-check" class="w-8 h-8 text-emerald-600 dark:text-emerald-500"></i></div>
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">File Found</h2>
-                <p class="text-gray-500 dark:text-gray-400 mb-6">Reload your previous file.</p>
-                <button onclick="verifyAndLoad()" class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-emerald-500/25 animate-pulse">
-                    <i data-lucide="refresh-cw" class="w-5 h-5"></i> Reload data.json
-                </button>
-                <button onclick="forgetFile()" class="mt-4 text-sm text-gray-500 hover:text-gray-300 underline">Use a different file</button>
-            </div>
-        </div>
-    </div>
 
-    <div id="app-topics" class="flex-grow flex flex-col overflow-hidden h-full relative">
-        <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-30 flex-shrink-0 transition-colors duration-300">
-            <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
-                <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 gap-1">
-                    <button onclick="switchTopicSubTab('topics')" id="tab-topics-sub" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm">All Subjects</button>
-                    <button onclick="switchTopicSubTab('analytics')" id="tab-analytics-sub" class="px-4 py-1.5 rounded-md text-sm font-medium hover:text-gray-900 dark:hover:text-gray-200 transition-all text-gray-500 dark:text-gray-400">Analytics</button>
-                </div>
-                
-                <div class="flex-grow"></div>
-                
-                <button onclick="openAddModal()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-sm"><i data-lucide="plus" class="w-4 h-4"></i> New Topic</button>
+                <!-- Save -->
+                <button id="btn-save" onclick="saveFile()" disabled class="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-300 disabled:text-gray-500 text-white rounded-lg shadow-sm transition-all">
+                    <i data-lucide="save" class="w-4 h-4"></i> Save
+                </button>
             </div>
         </header>
+
+    <div id="app-topics" class="flex-grow flex flex-col overflow-hidden h-full relative">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm z-20 sticky top-0 flex-shrink-0">
+    <div class="flex bg-gray-200 dark:bg-gray-800 rounded-lg p-1">
+        <button id="tab-topics-sub" onclick="switchTopicSubTab('topics')" class="px-4 py-1.5 text-sm font-medium rounded-md bg-indigo-600 text-white shadow-sm transition-all">All Subjects</button>
+        <button id="tab-analytics-sub" onclick="switchTopicSubTab('analytics')" class="px-4 py-1.5 text-sm font-medium rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-all">Analytics</button>
+    </div>
+    <button onclick="openAddModal()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md shadow-emerald-500/20 transition-all">
+        <i data-lucide="plus" class="w-4 h-4"></i> New Topic
+    </button>
+</div>
+        
         <main class="flex-grow overflow-hidden relative w-full">
             <div id="view-topics" class="w-full h-full p-4 sm:p-6 overflow-y-auto pb-20">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 min-h-min">
@@ -192,14 +215,13 @@
     </div>
 
     <div id="app-exams" class="flex-grow flex flex-col overflow-hidden h-full hidden">
-        <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-30 flex-shrink-0 transition-colors duration-300">
-            <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-                <h1 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Exam Countdown Tracker</h1>
-                <button onclick="openExamModal()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-sm">
-                    <i data-lucide="plus" class="w-4 h-4"></i> New Exam
-                </button>
-            </div>
-        </header>
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm z-20 sticky top-0 flex-shrink-0">
+    <h2 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Upcoming Assessments</h2>
+    <button onclick="openExamModal()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20 transition-all">
+        <i data-lucide="plus" class="w-4 h-4"></i> Add Exam
+    </button>
+</div>
+        
         <main class="flex-grow p-6 overflow-y-auto">
             <div id="exams-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 </div>
@@ -212,41 +234,29 @@
 
     <!-- Notes App with new Buttons -->
     <div id="app-notes" class="flex-grow flex flex-col overflow-hidden h-full hidden">
-        <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-30 flex-shrink-0 transition-colors duration-300">
-            <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex items-center gap-4">
-                <!-- New Filter Buttons on Left -->
-                <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 gap-1">
-                    <button onclick="switchNoteTab('All')" id="note-tab-All" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm">All</button>
-                    <button onclick="switchNoteTab('Note')" id="note-tab-Note" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">Notes</button>
-                    <button onclick="switchNoteTab('Question')" id="note-tab-Question" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">Questions</button>
-                </div>
-                
-                <!-- Middle Spacer for Search (Takes up remaining space to push buttons right) -->
-                <div class="flex-grow flex justify-center px-4">
-                    <div class="relative w-full max-w-md">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
-                        </div>
-                        <input 
-                            type="text" 
-                            placeholder="Search titles..." 
-                            oninput="handleNoteSearch(this.value)" 
-                            class="w-full bg-gray-100 dark:bg-gray-800 border-transparent focus:bg-white focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-500 rounded-md py-1.5 pl-10 pr-4 text-sm text-gray-900 dark:text-gray-200 focus:outline-none transition-all placeholder-gray-500"
-                        >
-                    </div>
-                </div>
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-800 flex flex-col xl:flex-row justify-between items-center gap-4 bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm z-20 sticky top-0 flex-shrink-0">
+    <div class="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
+        <div class="relative">
+            <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+            <input type="text" placeholder="Search notes..." oninput="handleNoteSearch(this.value)" class="pl-9 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-sm focus:outline-none focus:border-indigo-500 w-full sm:w-64 transition-colors text-gray-800 dark:text-gray-200">
+        </div>
+        <div class="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1 self-start sm:self-auto">
+            <button id="note-tab-All" onclick="switchNoteTab('All')" class="px-3 py-1.5 text-xs font-bold rounded-md bg-indigo-600 text-white shadow-sm transition-all">All</button>
+            <button id="note-tab-Note" onclick="switchNoteTab('Note')" class="px-3 py-1.5 text-xs font-bold rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-all">Notes</button>
+            <button id="note-tab-Question" onclick="switchNoteTab('Question')" class="px-3 py-1.5 text-xs font-bold rounded-md text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-all">Questions</button>
+        </div>
+    </div>
 
-                <!-- Right Side Buttons -->
-                <div class="flex items-center gap-2 flex-shrink-0">
-                    <button onclick="openImportModal()" class="flex items-center gap-2 px-3 py-1.5 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-medium rounded-md transition-colors shadow-sm">
-                        <i data-lucide="download" class="w-4 h-4"></i> Import Note
-                    </button>
-                    <button onclick="openNoteModal()" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-medium rounded-md transition-colors shadow-sm">
-                        <i data-lucide="plus" class="w-4 h-4"></i> New Note
-                    </button>
-                </div>
-            </div>
-        </header>
+    <div class="flex gap-2 w-full xl:w-auto justify-end">
+        <button onclick="openImportModal()" class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-750 rounded-lg text-sm font-bold transition-all">
+            <i data-lucide="download" class="w-4 h-4"></i> <span class="hidden sm:inline">Import</span>
+        </button>
+        <button onclick="openNoteModal()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-md shadow-indigo-500/20 transition-all">
+            <i data-lucide="plus" class="w-4 h-4"></i> <span class="hidden sm:inline">Add Note</span>
+        </button>
+    </div>
+</div>
+        
         <main class="flex-grow p-6 overflow-y-auto bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
             <div id="notes-container" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
                 </div>
@@ -259,12 +269,8 @@
 
 
     <div id="app-time" class="flex-grow flex flex-col overflow-hidden h-full hidden">
-        <header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm z-20 flex-shrink-0 transition-colors duration-300">
-            <div class="w-full px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-                <h1 class="text-sm font-bold text-indigo-500 uppercase tracking-wider">Reading Tracker</h1>
-                <button onclick="clearAllTimeData()" class="text-xs text-red-500 hover:text-red-600 underline">Reset Logs</button>
-            </div>
-        </header>
+        
+        
         <main class="flex-grow p-4 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto bg-gray-50 dark:bg-gray-950 transition-colors duration-300">
             <div class="w-full flex flex-col lg:flex-row gap-6 h-full items-start">
                 <section class="w-full lg:w-[400px] flex-shrink-0 flex flex-col gap-6">
@@ -307,7 +313,7 @@
         </main>
     </div>
 
-    <div id="dropdown-menu" class="absolute z-50 w-40 bg-white dark:bg-gray-800 rounded-md shadow-xl border border-gray-200 dark:border-gray-700 py-1 text-sm hidden">
+    <div id="dropdown-menu" class="fixed z-50 w-40 bg-white dark:bg-gray-800 rounded-md shadow-xl border border-gray-200 dark:border-gray-700 py-1 text-sm hidden">
         <button onclick="setStatusFromDropdown('To Do')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-red"></div> Not Started</button>
         <button onclick="setStatusFromDropdown('In Progress')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-yellow"></div> In Progress</button>
         <button onclick="setStatusFromDropdown('Complete')" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-notion-green"></div> Complete</button>
@@ -436,6 +442,30 @@
         </div>
     </div>
 
+    </main>
+    </div>
+
+    <div id="data-overlay" class="absolute inset-0 z-40 bg-white/95 dark:bg-gray-950/95 flex flex-col items-center justify-center text-center p-6 backdrop-blur-sm transition-colors duration-300">
+        <div class="bg-white dark:bg-gray-900 p-8 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-2xl max-w-lg w-full">
+            <div id="overlay-initial" class="flex flex-col items-center">
+                <div class="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-6"><i data-lucide="database" class="w-8 h-8 text-indigo-600 dark:text-indigo-400"></i></div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Load Your Data</h2>
+                <p class="text-gray-500 dark:text-gray-400 mb-8">Connect to your local <code>data.json</code> file.</p>
+                <button onclick="openFileNew()" class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-indigo-500/25 group">
+                    <i data-lucide="folder-search" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> Select data.json
+                </button>
+            </div>
+            <div id="overlay-reconnect" class="hidden flex flex-col items-center">
+                <div class="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mb-6"><i data-lucide="file-check" class="w-8 h-8 text-emerald-600 dark:text-emerald-500"></i></div>
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">File Found</h2>
+                <p class="text-gray-500 dark:text-gray-400 mb-6">Reload your previous file.</p>
+                <button onclick="verifyAndLoad()" class="w-full flex items-center justify-center gap-3 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-emerald-500/25 animate-pulse">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i> Reload data.json
+                </button>
+                <button onclick="forgetFile()" class="mt-4 text-sm text-gray-500 hover:text-gray-300 underline">Use a different file</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // --- VARIABLES ---
@@ -458,6 +488,40 @@
         let currentNoteFilter = 'All'; 
         let currentChartRange = 14; 
         let currentSearchTerm = '';
+
+        // --- SIDEBAR LOGIC ---
+        let isSidebarExpanded = true;
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const texts = document.querySelectorAll('.sidebar-text');
+            const icon = document.getElementById('sidebar-toggle-icon');
+
+            isSidebarExpanded = !isSidebarExpanded;
+
+            if (isSidebarExpanded) {
+                sidebar.classList.remove('w-20');
+                sidebar.classList.add('w-64');
+                texts.forEach(t => {
+                    t.classList.remove('opacity-0', 'w-0', 'hidden');
+                    t.classList.add('opacity-100', 'w-auto');
+                });
+                // Change icon to 'close' arrow
+                icon.setAttribute('data-lucide', 'panel-left-close');
+            } else {
+                sidebar.classList.remove('w-64');
+                sidebar.classList.add('w-20'); // Collapsed width
+                texts.forEach(t => {
+                    t.classList.remove('opacity-100', 'w-auto');
+                    t.classList.add('opacity-0', 'w-0', 'hidden');
+                });
+                // Change icon to 'open' arrow
+                icon.setAttribute('data-lucide', 'panel-left-open');
+            }
+            
+            // Refresh icons
+            if(typeof lucide !== 'undefined') lucide.createIcons();
+        }
 
         // --- DB ---
         const DB_NAME = 'ProductivityHubDB';
@@ -553,10 +617,8 @@
                 applyTheme();
 
                 document.getElementById('data-overlay').classList.add('hidden');
-                const btnSave = document.getElementById('btn-save');
-                btnSave.disabled = false;
-                btnSave.classList.remove('bg-gray-300', 'dark:bg-gray-700', 'text-gray-500', 'dark:text-gray-400', 'cursor-not-allowed');
-                btnSave.classList.add('bg-emerald-600', 'hover:bg-emerald-500', 'text-white', 'ring-emerald-400/50');
+                document.getElementById('app-layout').classList.remove('hidden'); // <--- ADD THIS LINE
+                document.getElementById('btn-save').disabled = false;
                 
                 switchMainTab('topics');
                 switchTopicSubTab('topics');
@@ -572,7 +634,7 @@
             try {
                 const btnSave = document.getElementById('btn-save');
                 const originalContent = btnSave.innerHTML;
-                btnSave.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4 animate-spin"></i> Saving...`;
+                btnSave.innerHTML = `<i data-lucide="refresh-cw" class="w-4 h-4 animate-spin"></i> Save`;
                 if(typeof lucide !== 'undefined') lucide.createIcons();
 
                 const writable = await fileHandle.createWritable();
@@ -581,7 +643,7 @@
                 await writable.write(JSON.stringify(data, null, 4));
                 await writable.close();
 
-                btnSave.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Saved!`;
+                btnSave.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i> Save`;
                 if(typeof lucide !== 'undefined') lucide.createIcons();
                 setTimeout(() => { btnSave.innerHTML = originalContent; if(typeof lucide !== 'undefined') lucide.createIcons(); }, 1500);
             } catch (err) { console.error(err); alert("Failed to save."); }
@@ -662,32 +724,39 @@
             const btnExams = document.getElementById('nav-btn-exams');
             const btnNotes = document.getElementById('nav-btn-notes');
             const btnTime = document.getElementById('nav-btn-time');
+            const headerTitle = document.getElementById('header-title');
 
+            // Hide all views
             [appTopics, appExams, appNotes, appTime].forEach(el => el.classList.add('hidden'));
+            
+            // Reset button styles (to inactive state)
+            const inactiveClass = "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800";
+            const activeClass = "bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400";
+
             [btnTopics, btnExams, btnNotes, btnTime].forEach(btn => {
-                btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
-                btn.classList.add('text-gray-500', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-gray-200');
+                btn.className = `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${inactiveClass}`;
             });
 
+            // Activate specific tab
             if (tab === 'topics') {
                 appTopics.classList.remove('hidden');
-                btnTopics.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                btnTopics.classList.remove('text-gray-500', 'dark:text-gray-400');
+                btnTopics.className = `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${activeClass}`;
+                headerTitle.innerText = "Topics Overview";
                 renderTopicApp();
             } else if (tab === 'exams') {
                 appExams.classList.remove('hidden');
-                btnExams.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                btnExams.classList.remove('text-gray-500', 'dark:text-gray-400');
+                btnExams.className = `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${activeClass}`;
+                headerTitle.innerText = "Exam Tracker";
                 renderExamApp();
             } else if (tab === 'notes') { 
                 appNotes.classList.remove('hidden');
-                btnNotes.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                btnNotes.classList.remove('text-gray-500', 'dark:text-gray-400');
+                btnNotes.className = `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${activeClass}`;
+                headerTitle.innerText = "My Notes";
                 renderNotesApp();
             } else {
                 appTime.classList.remove('hidden');
-                btnTime.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-                btnTime.classList.remove('text-gray-500', 'dark:text-gray-400');
+                btnTime.className = `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all group relative ${activeClass}`;
+                headerTitle.innerText = "Reading Log";
                 renderTimeApp();
             }
             if(typeof lucide !== 'undefined') lucide.createIcons();
@@ -718,7 +787,14 @@
         }
 
         // --- 1. TOPIC LOGIC ---
-        function getStatusColor(status) { switch(status) { case 'Complete': return 'bg-notion-green text-white'; case 'In Progress': return 'bg-notion-yellow text-gray-900'; default: return 'bg-notion-red text-white'; } }
+        function getStatusColor(status) { 
+    // Using specific Tailwind colors to ensure they pop
+    switch(status) { 
+        case 'Complete': return 'bg-emerald-600 text-white border-emerald-700'; 
+        case 'In Progress': return 'bg-yellow-400 text-black border-yellow-500'; 
+        default: return 'bg-rose-600 text-white border-rose-700'; 
+    } 
+}
         function getStatusLabel(status) { return status === 'To Do' ? 'Not Started' : status; }
         function openAddModal() { document.getElementById('add-modal').classList.remove('hidden'); document.getElementById('new-topic-title').focus(); }
         function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); document.getElementById('new-topic-title').value = ''; }
@@ -734,7 +810,21 @@
             renderTopicApp(); closeAddModal(); saveFile();
         }
         function updateTopicTitle(id, newTitle) { const topic = topics.find(t => t.id === id); if(topic && newTitle.trim() !== "" && topic.title !== newTitle.trim()) { saveStateToHistory(); topic.title = newTitle.trim(); saveFile(); } }
-        function showDropdown(event, id) { event.stopPropagation(); currentDropdownId = id; const d = document.getElementById('dropdown-menu'); const r = event.currentTarget.getBoundingClientRect(); d.style.top = `${r.bottom + window.scrollY + 5}px`; d.style.left = `${r.left + window.scrollX}px`; d.classList.remove('hidden'); document.addEventListener('click', hideDropdown); }
+        function showDropdown(event, id) { 
+            event.stopPropagation(); 
+            currentDropdownId = id; 
+            const dropdown = document.getElementById('dropdown-menu'); 
+            
+            // Get exact position of the clicked button
+            const buttonRect = event.currentTarget.getBoundingClientRect();
+            
+            // Position dropdown directly below button (with 4px gap)
+            dropdown.style.top = `${buttonRect.bottom + 4}px`; 
+            // Align with left edge of button
+            dropdown.style.left = `${buttonRect.left}px`;
+            
+            dropdown.classList.remove('hidden'); 
+            document.addEventListener('click', hideDropdown, { once: true }); }
         function hideDropdown() { document.getElementById('dropdown-menu').classList.add('hidden'); document.removeEventListener('click', hideDropdown); currentDropdownId = null; }
         function setStatusFromDropdown(status) { if(currentDropdownId !== null) { const t = topics.find(t => t.id === currentDropdownId); if(t && t.status !== status) { saveStateToHistory(); t.status = status; renderTopicApp(); saveFile(); } } hideDropdown(); }
         function handleDragStart(e, id) { e.dataTransfer.setData("text/plain", id); e.dataTransfer.effectAllowed = "move"; e.target.classList.add('dragging'); }
@@ -742,16 +832,27 @@
         function handleDrop(e, newStatus) { e.preventDefault(); e.currentTarget.classList.remove('drag-over'); const id = parseInt(e.dataTransfer.getData("text/plain")); const t = topics.find(t => t.id === id); if (t && t.status !== newStatus) { saveStateToHistory(); t.status = newStatus; renderTopicApp(); saveFile(); } document.querySelectorAll('.dragging').forEach(el => el.classList.remove('dragging')); }
 
         function createGridCard(topic) {
+            // Enhanced colors map
             const c = { 
-                'Biology': 'border-notion-bio/30 bg-orange-50 dark:bg-gray-800/50 hover:border-notion-bio/60', 
-                'Chemistry': 'border-notion-chem/30 bg-teal-50 dark:bg-gray-800/50 hover:border-notion-chem/60', 
-                'Mathematics': 'border-notion-math/30 bg-blue-50 dark:bg-gray-800/50 hover:border-notion-math/60', 
-                'Physics': 'border-notion-phy/30 bg-purple-50 dark:bg-gray-800/50 hover:border-notion-phy/60' 
-            }[topic.subject] || 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50';
+                'Biology': 'bg-white dark:bg-gray-800 border-l-4 border-l-notion-bio shadow-sm', 
+                'Chemistry': 'bg-white dark:bg-gray-800 border-l-4 border-l-notion-chem shadow-sm', 
+                'Mathematics': 'bg-white dark:bg-gray-800 border-l-4 border-l-notion-math shadow-sm', 
+                'Physics': 'bg-white dark:bg-gray-800 border-l-4 border-l-notion-phy shadow-sm' 
+            }[topic.subject] || 'bg-white dark:bg-gray-800 border-l-4 border-gray-300 shadow-sm';
             
-            return `<div class="card-hover border ${c} rounded-lg p-3 transition-all duration-200 group relative">
-                <div class="flex items-start gap-2 mb-2"><i data-lucide="file-text" class="w-4 h-4 mt-1 text-gray-400 flex-shrink-0"></i><div contenteditable="true" onblur="updateTopicTitle(${topic.id}, this.innerText)" class="text-sm font-medium text-gray-800 dark:text-gray-200 leading-tight flex-grow cursor-text outline-none rounded px-1 -ml-1 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors">${topic.title}</div></div>
-                <button onclick="showDropdown(event, ${topic.id})" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${getStatusColor(topic.status)} hover:opacity-80 transition-opacity shadow-sm">${getStatusLabel(topic.status)} <i data-lucide="chevron-down" class="w-3 h-3 ml-1"></i></button></div>`;
+            return `<div class="card-hover border border-gray-200 dark:border-gray-700 ${c} rounded-r-lg p-4 transition-all duration-200 group relative flex flex-col gap-2">
+        <div class="flex justify-between items-start">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-gray-400">${topic.subject}</span>
+            
+        </div>
+        <div contenteditable="true" onblur="updateTopicTitle(${topic.id}, this.innerText)" class="text-base font-bold text-gray-800 dark:text-gray-100 leading-tight outline-none hover:bg-gray-50 dark:hover:bg-gray-700/50 p-1 rounded -ml-1 transition-colors">${topic.title}</div>
+        <div class="mt-2">
+            <button onclick="showDropdown(event, ${topic.id})" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${getStatusColor(topic.status)} shadow-sm hover:opacity-90 transition-opacity">
+                ${getStatusLabel(topic.status)}
+                <i data-lucide="chevron-down" class="w-3 h-3"></i>
+            </button>
+        </div>
+    </div>`;
         }
         function createKanbanCard(topic) { return `<div draggable="true" ondragstart="handleDragStart(event, ${topic.id})" class="cursor-grab active:cursor-grabbing bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 shadow-sm hover:border-indigo-500/50 hover:bg-gray-50 dark:hover:bg-gray-750 transition-all"><span class="text-[10px] uppercase tracking-wider opacity-60 mb-1 block text-gray-500 dark:text-gray-400">${topic.subject}</span><div class="flex items-start gap-2"><span class="text-sm font-medium text-gray-800 dark:text-gray-200 leading-tight">${topic.title}</span></div></div>`; }
 
