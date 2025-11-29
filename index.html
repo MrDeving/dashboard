@@ -1497,6 +1497,28 @@
             const gridColor = isDark ? '#374151' : '#e5e7eb';
             const tickColor = isDark ? '#9ca3af' : '#6b7280';
 
+            const chartPlugins = [];
+            if (currentChartType === 'bar') {
+                chartPlugins.push({
+                    id: 'topLabels', 
+                    afterDatasetsDraw(chart) { 
+                        const { ctx } = chart; 
+                        chart.data.datasets.forEach((ds, i) => { 
+                            chart.getDatasetMeta(i).data.forEach((bar, index) => { 
+                                const d = ds.data[index]; 
+                                if (d > 0) { 
+                                    ctx.fillStyle = isDark ? '#d1d5db' : '#374151'; 
+                                    ctx.font = 'bold 12px sans-serif'; 
+                                    ctx.textAlign = 'center'; 
+                                    ctx.textBaseline = 'bottom'; 
+                                    ctx.fillText(d, bar.x, bar.y - 5); 
+                                } 
+                            }); 
+                        }); 
+                    } 
+                });
+            }
+
             timeChartInstance = new Chart(ctx, {
                 type: currentChartType, // <--- CHANGE THIS
                 data: { 
@@ -1519,6 +1541,7 @@
                         categoryPercentage: currentChartType === 'bar' ? 0.8 : 1.0 
                     }] 
                 }, 
+                plugins: chartPlugins,
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false, 
