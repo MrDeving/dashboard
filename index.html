@@ -161,7 +161,7 @@
                 </button>
 
                 <!-- Switch File -->
-                <button onclick="openFileNew()" class="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 rounded-lg shadow-sm transition-all">
+                <button onclick="openFileNew()" class="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-gray-700 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600 rounded-lg shadow-sm transition-all">
                     <i data-lucide="folder-open" class="w-4 h-4"></i> Switch File
                 </button>
 
@@ -300,6 +300,18 @@
                                 <button onclick="setChartRange(14)" id="btn-range-14" class="px-3 py-1 rounded text-xs font-bold transition-all bg-indigo-600 text-white shadow-sm">14D</button>
                                 <button onclick="setChartRange(21)" id="btn-range-21" class="px-3 py-1 rounded text-xs font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">21D</button>
                                 <button onclick="setChartRange(30)" id="btn-range-30" class="px-3 py-1 rounded text-xs font-bold transition-all text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200">30D</button>
+                                <span class="text-gray-300 dark:text-gray-700 mx-2">|</span> 
+
+                                <button 
+                                    id="chartType-bar" 
+                                    onclick="switchChartType('bar', this)" 
+                                    class="chart-type-btn px-3 py-1 rounded-full font-medium text-xs bg-indigo-500 text-white shadow-md transition-colors"
+                                >Bar</button>
+                                <button 
+                                    id="chartType-line" 
+                                    onclick="switchChartType('line', this)" 
+                                    class="chart-type-btn px-3 py-1 rounded-full font-medium text-xs text-gray-700 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                                >Line</button>
                             </div>
                         </div>
                         <div class="flex gap-4">
@@ -487,6 +499,7 @@
         
         let currentNoteFilter = 'All'; 
         let currentChartRange = 14; 
+        let currentChartType = 'bar'; // <--- ADD THIS LINE
         let currentSearchTerm = '';
 
         // --- SIDEBAR LOGIC ---
@@ -899,7 +912,8 @@
             const ctx = document.getElementById('statusChart').getContext('2d');
             // Theme-aware colors
             const isDark = settings.theme === 'dark';
-            const todoColor = '#353A3F';
+            // Updated: Use #465468 for light theme, keep #353A3F for dark
+            const todoColor = isDark ? '#353A3F' : '#465468';
             const textColor = isDark ? '#ffffff' : '#18181b';
             const subTextColor = isDark ? '#9ca3af' : '#71717a';
 
@@ -1403,6 +1417,25 @@
             renderTimeApp();
         }
 
+        function switchChartType(type, element) {
+            if (currentChartType === type) return;
+
+            currentChartType = type;
+            
+            // 1. Update active button styling
+            document.querySelectorAll('.chart-type-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-500', 'text-white', 'shadow-md');
+                btn.classList.add('text-gray-700', 'dark:text-gray-400', 'hover:bg-gray-200', 'dark:hover:bg-gray-800');
+            });
+
+            element.classList.add('bg-indigo-500', 'text-white', 'shadow-md');
+            element.classList.remove('text-gray-700', 'dark:text-gray-400', 'hover:bg-gray-200', 'dark:hover:bg-gray-800');
+
+            // 2. Re-render the chart with the new type
+            renderTimeApp();
+        }
+
+
         function renderTimeApp() {
             const tbody = document.getElementById('dataTableBody');
             const empty = document.getElementById('emptyState');
@@ -1464,49 +1497,33 @@
             const gridColor = isDark ? '#374151' : '#e5e7eb';
             const tickColor = isDark ? '#9ca3af' : '#6b7280';
 
-            timeChartInstance = new Chart(ctx, { 
-                type: 'bar', 
+            timeChartInstance = new Chart(ctx, {
+                type: currentChartType, // <--- CHANGE THIS
                 data: { 
                     labels, 
                     datasets: [{ 
                         label: 'Minutes', 
                         data: keys.map(k => map[k]), 
-                        backgroundColor: bg, 
-                        borderColor: border, 
+                        
+                        // For line chart, we need a border and no fill
+                        backgroundColor: currentChartType === 'line' ? 'transparent' : bg,
+                        borderColor: currentChartType === 'line' ? '#8b5cf6' : border,
+                        pointBackgroundColor: currentChartType === 'line' ? '#8b5cf6' : border,
+                        tension: currentChartType === 'line' ? 0.4 : 0, // Makes line chart smooth
+                        fill: currentChartType === 'line' ? 'start' : false, // Fill area under line
+                        
+                        // Bar chart specific properties
                         borderWidth: 2, 
-                        borderRadius: 6, 
-                        barPercentage: 0.6, 
-                        categoryPercentage: 0.8 
+                        borderRadius: currentChartType === 'bar' ? 6 : 0, 
+                        barPercentage: currentChartType === 'bar' ? 0.6 : 1.0, 
+                        categoryPercentage: currentChartType === 'bar' ? 0.8 : 1.0 
                     }] 
                 }, 
-                plugins: [{ 
-                    id: 'topLabels', 
-                    afterDatasetsDraw(chart) { 
-                        const { ctx } = chart; 
-                        chart.data.datasets.forEach((ds, i) => { 
-                            chart.getDatasetMeta(i).data.forEach((bar, index) => { 
-                                const d = ds.data[index]; 
-                                if (d > 0) { 
-                                    ctx.fillStyle = isDark ? '#d1d5db' : '#374151'; 
-                                    ctx.font = 'bold 12px sans-serif'; 
-                                    ctx.textAlign = 'center'; 
-                                    ctx.textBaseline = 'bottom'; 
-                                    ctx.fillText(d, bar.x, bar.y - 5); 
-                                } 
-                            }); 
-                        }); 
-                    } 
-                }], 
                 options: { 
                     responsive: true, 
                     maintainAspectRatio: false, 
                     layout: { padding: { top: 20 } }, 
                     scales: { 
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: gridColor }, 
-                            ticks: { color: tickColor } 
-                        }, 
                         x: { 
                             grid: { display: false }, 
                             ticks: { 
@@ -1516,6 +1533,11 @@
                                 autoSkip: true, 
                                 maxTicksLimit: 14 
                             } 
+                        }, 
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: gridColor }, 
+                            ticks: { color: tickColor } 
                         } 
                     }, 
                     plugins: { 
